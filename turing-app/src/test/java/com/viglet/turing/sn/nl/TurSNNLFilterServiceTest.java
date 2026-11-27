@@ -209,7 +209,8 @@ class TurSNNLFilterServiceTest {
         siteWithFields();
         parserAnswers("""
                 {"query":{"bool":{"filter":[{"term":{"contract":"clt"}}]}}}""");
-        siteHolds(Map.of("f0", List.of("CLT", "PJ")));
+        // T1359 — every facet is read before the parse: f0 = city, f1 = contract.
+        siteHolds(Map.of("f1", List.of("CLT", "PJ")));
 
         TurSNNLFilters result = service.parse("vagas", "pt_BR", "vaga com carteira assinada");
 
@@ -414,7 +415,8 @@ class TurSNNLFilterServiceTest {
         assertThat(result.filters().get(0).isRange()).isTrue();
         assertThat(result.filters().get(0).sourceWords()).containsExactly("acima de 3000 reais");
         assertThat(result.q()).isEqualTo("salario");
-        verify(dslSearchService, never()).search(any(), any(), any());
+        // T1359 — one read, of the facet values the prompt lists; a range needs no other.
+        verify(dslSearchService).search(any(), any(), any());
     }
 
     @Test
@@ -584,5 +586,67 @@ class TurSNNLFilterServiceTest {
         assertThat(TurSNNLFilterService.sourceWords("salvador", "salva")).isEmpty();
         assertThat(TurSNNLFilterService.canonical("CAMPINAS", java.util.Set.of("Campinas")))
                 .isEqualTo("Campinas");
+    }
+
+    private void eventSite() {
+        when(turSNSiteRepository.findByNameIgnoreCase("vagas")).thenReturn(Optional.of(site));
+        when(parser.isAvailable()).thenReturn(true);
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+                field("tipo_evento", TurSEFieldType.STRING, true),
+                field("title", TurSEFieldType.TEXT, false)));
+        siteHolds(Map.of("f0", List.of("Palestra", "Debate")));
+    }
+
+    @Test
+    @DisplayName("T1359: a noun the parse left in q that names a facet value becomes that filter")
+    void aNounInQBecomesItsFacetFilter() {
+        eventSite();
+        parserAnswers("""
+                {"query":{"bool":{"must":[{"match":{"_text_":"palestras sobre democracia"}}]}}}""");
+
+        TurSNNLFilters result = service.parse("vagas", "pt_BR", "palestras sobre democracia");
+
+        assertThat(result.q()).isEqualTo("sobre democracia");
+        assertThat(result.fq()).containsExactly("tipo_evento:Palestra");
+        assertThat(result.filters()).singleElement().satisfies(filter -> {
+            assertThat(filter.values()).containsExactly("Palestra");
+            assertThat(filter.sourceWords()).containsExactly("palestras");
+            assertThat(filter.confidence()).isEqualTo(TurSNNLFilterService.INFERRED);
+            assertThat(filter.grounded()).isTrue();
+        });
+        ArgumentCaptor<TurNLFacetParser.ParseRequest> request = ArgumentCaptor.captor();
+        verify(parser).parse(request.capture());
+        assertThat(request.getValue().values()).containsExactly(Map.entry("tipo_evento", List.of("Palestra",
+                "Debate")));
+        // the values were read once, and grounding reused them
+        verify(dslSearchService).search(eq("vagas"), eq("pt_BR"), any());
+    }
+
+    @Test
+    @DisplayName("T1359: a value used as the topic of another noun stays in q")
+    void aTopicStaysInQ() {
+        eventSite();
+        parserAnswers("""
+                {"query":{"bool":{"must":[{"match":{"_text_":"livros sobre palestras"}}]}}}""");
+
+        TurSNNLFilters result = service.parse("vagas", "pt_BR", "livros sobre palestras");
+
+        assertThat(result.q()).isEqualTo("livros sobre palestras");
+        assertThat(result.filters()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("T1359: a field the parse already filtered is not widened by a noun in q")
+    void aParsedFieldIsNotWidened() {
+        eventSite();
+        parserAnswers("""
+                {"query":{"bool":{
+                  "filter":[{"term":{"tipo_evento":"Palestra"}}],
+                  "must":[{"match":{"_text_":"debates"}}]}}}""");
+
+        TurSNNLFilters result = service.parse("vagas", "pt_BR", "palestras e debates");
+
+        assertThat(result.fq()).containsExactly("tipo_evento:Palestra");
+        assertThat(result.q()).isEqualTo("debates");
     }
 }

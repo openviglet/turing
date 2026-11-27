@@ -13,6 +13,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
@@ -64,6 +65,9 @@ public class TurLlmNLFacetParser implements TurNLFacetParser {
     /** T1127 — the cost stage of a natural-language filter parse. */
     static final String STAGE_NL_FILTERS = "sn.nl-filters";
 
+    /** T1359 — at most this many values of one facet field go into the prompt. */
+    static final int PROMPT_VALUES = 30;
+
     void setClockForTest(Clock clock) {
         this.clock = clock;
     }
@@ -96,7 +100,7 @@ public class TurLlmNLFacetParser implements TurNLFacetParser {
         String reply;
         try {
             List<Message> messages = List.of(
-                    new SystemMessage(systemPrompt(request.schema())),
+                    new SystemMessage(systemPrompt(request.schema(), request.values())),
                     new UserMessage(userPrompt(request)));
             var response = chatModel.call(new Prompt(messages));
             // T1127 — the parse spends tokens like any SN call: record it in the cost ledger.
@@ -115,7 +119,7 @@ public class TurLlmNLFacetParser implements TurNLFacetParser {
 
     // ─────────────────────────── Prompt ───────────────────────────
 
-    private String systemPrompt(List<TurNLFacetField> schema) {
+    private String systemPrompt(List<TurNLFacetField> schema, Map<String, List<String>> values) {
         return """
                 You translate a user's natural-language catalog query into an \
                 Elasticsearch-compatible Query DSL JSON body. Output ONLY the JSON \
@@ -151,10 +155,16 @@ public class TurLlmNLFacetParser implements TurNLFacetParser {
                   keep those words in the free-text part.
                 - Facet/term values are matched case-insensitively, so casing need \
                   not be exact; still prefer the value as written in the query.
+                - A field may list the VALUES the site holds. When a word of the \
+                  query names one of them, in any number or case ("palestras" for \
+                  the value "Palestra"), emit a term filter with the value exactly \
+                  as listed and leave that word out of the free text. Not when the \
+                  word is the topic of something else ("livros sobre palestras", \
+                  "books about lectures"): keep it in the free text.
 
-                SCHEMA (field: type [facet] - description):
+                SCHEMA (field: type [facet] - description; values):
                 %s
-                """.formatted(renderSchema(schema));
+                """.formatted(renderSchema(schema, values));
     }
 
     private String userPrompt(ParseRequest request) {
@@ -170,7 +180,7 @@ public class TurLlmNLFacetParser implements TurNLFacetParser {
         return sb.toString();
     }
 
-    private String renderSchema(List<TurNLFacetField> schema) {
+    static String renderSchema(List<TurNLFacetField> schema, Map<String, List<String>> values) {
         if (schema == null || schema.isEmpty()) {
             return "(no fields declared)";
         }
@@ -184,9 +194,19 @@ public class TurLlmNLFacetParser implements TurNLFacetParser {
             // superlative ("cheapest") to the right numeric field and understand
             // what each facet means, not just its name.
             String description = StringUtils.hasText(f.description()) ? " - " + f.description().trim() : "";
-            lines.add("- %s: %s%s%s".formatted(f.name(), type, f.facet() ? " [facet]" : "", description));
+            lines.add("- %s: %s%s%s%s".formatted(f.name(), type, f.facet() ? " [facet]" : "", description,
+                    listedValues(values, f.name())));
         }
         return String.join("\n", lines);
+    }
+
+    /** T1359 — the values the site holds for {@code field}, so a noun can be mapped to one. */
+    private static String listedValues(Map<String, List<String>> values, String field) {
+        List<String> held = values == null ? null : values.get(field);
+        if (held == null || held.isEmpty()) {
+            return "";
+        }
+        return "; values: " + String.join(" | ", held.stream().limit(PROMPT_VALUES).toList());
     }
 
     // ─────────────────────────── Parsing the reply ───────────────────────────

@@ -2427,31 +2427,6 @@ module boundaries files here.
 
 ## CXCII Filters from a sentence say what visitors say
 
-### CXCII.1 Nouns that name a facet value (T1359)
-
-**Where it happened.** fespsp-institucional FI146, the search lab, on the d5ce6ee image
-with `gpt-4o-mini`. Site `fespsp`, pt_BR; the `evento` type has a STRING facet
-`tipo_evento` (`Palestra`, `Debate`, `Lançamento`).
-
-**What came back.** `POST /api/sn/fespsp/nl-filters` with "palestras sobre democracia em
-novembro" read only the month; "palestras" stayed in `q`, though `Palestra` is a value
-of `tipo_evento`, so the visitor gets every page mentioning it instead of the lectures.
-The cause is in the seam, not the model: `TurLlmNLFacetParser` sends the field names and
-types and never a value, and `TurSNNLFilterService.ground` only checks values the parse
-already proposed. Nothing can turn a noun into a value it was never shown.
-
-**What it should do.** The parse prompt carries the site's facet values
-(`facetVocabulary`, already read for the deep dive and the catalog kit). After it, a
-deterministic pass grounds the words left in `q` against the values `ground` already
-fetched, folded for case, accents and plural by the locale's analyzer, and accepts a
-match only when one value of one field fits (T1300's rule). Each becomes a filter with
-its `sourceWords` and leaves `q`. No implied `type` filter: the value already restricts
-the type, and one shared by two types would be wrong. The date half (range facet
-overlap) is T1360's. Tests: a word two fields hold, a stop word, a multi-word value, and
-a value used as a topic ("livros sobre palestras") stay in `q`.
-
-**Workaround.** None. FI146 waits on this line.
-
 ### CXCII.2 This week, read from a sentence and an answer (T1360)
 
 **Where it happened.** fespsp-institucional FI146, same site as the line before, on

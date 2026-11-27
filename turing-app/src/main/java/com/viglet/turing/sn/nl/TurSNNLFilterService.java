@@ -88,6 +88,8 @@ public class TurSNNLFilterService {
     static final double INFERRED = 0.6;
     static final double UNCHECKED = 0.3;
     private static final int GROUNDING_BUCKETS = 1000;
+    /** T1359 — at most this many values of one facet field go into the parse prompt. */
+    private static final int PROMPT_VALUES = 30;
     private static final ObjectMapper MAPPER = JsonMapper.builder().build();
 
     private final TurSNSiteRepository turSNSiteRepository;
@@ -132,16 +134,25 @@ public class TurSNNLFilterService {
                 .collect(Collectors.toMap(TurNLFacetField::name, Function.identity(), (a, b) -> a,
                         LinkedHashMap::new));
         String searchLocale = StringUtils.hasText(locale) ? locale : firstLocale(site);
+        // T1359 — the facet values are read once, before the parse: the prompt lists
+        // them so a noun can name one, and grounding checks against the same read.
+        List<String> facets = schema.values().stream()
+                .filter(field -> field.facet() && !field.numeric())
+                .map(TurNLFacetField::name)
+                .toList();
+        Map<String, Set<String>> held = siteValues(site.getName(), searchLocale, facets);
+        Map<String, List<String>> vocabulary = new LinkedHashMap<>();
+        held.forEach((field, values) -> vocabulary.put(field, values.stream().limit(PROMPT_VALUES).toList()));
 
         TurDslQueryRequest parsed;
         try {
             parsed = parser.parse(new TurNLFacetParser.ParseRequest(site.getName(), searchLocale, text,
-                    List.copyOf(schema.values())));
+                    List.copyOf(schema.values()), vocabulary));
         } catch (TurNLFacetParser.TurNLFacetParseException e) {
             log.warn("[T1085] Could not parse '{}' for site '{}': {}", text, siteName, e.getMessage());
             return new TurSNNLFilters(true, text, text, List.of(), List.of(), List.of());
         }
-        return ground(site.getName(), searchLocale, text, schema, parsed);
+        return ground(site.getName(), searchLocale, text, schema, parsed, held, Set.copyOf(facets));
     }
 
     /**
@@ -158,15 +169,21 @@ public class TurSNNLFilterService {
         if (schema != null) {
             schema.forEach(field -> bySchema.putIfAbsent(field.name(), field));
         }
-        return ground(siteName, locale, text, bySchema, parsed);
+        return ground(siteName, locale, text, bySchema, parsed, Map.of(), Set.of());
     }
 
+    /**
+     * @param held the values already read, by field
+     * @param read the fields already read, including those that hold nothing
+     */
     private TurSNNLFilters ground(String siteName, String searchLocale, String text,
-            Map<String, TurNLFacetField> schema, TurDslQueryRequest parsed) {
+            Map<String, TurNLFacetField> schema, TurDslQueryRequest parsed, Map<String, Set<String>> held,
+            Set<String> read) {
         Parse flat = flatten(parsed == null ? null : parsed.query());
         List<TurSNNLFilters.Dropped> dropped = new ArrayList<>();
-        Map<String, Set<String>> siteValues = new LinkedHashMap<>(siteValues(siteName, searchLocale,
-                termFieldsToGround(flat, schema)));
+        Map<String, Set<String>> siteValues = new LinkedHashMap<>(held);
+        siteValues.putAll(siteValues(siteName, searchLocale, termFieldsToGround(flat, schema).stream()
+                .filter(field -> !read.contains(field)).toList()));
         Map<String, List<String>> terms = rehome(siteName, searchLocale, flat.terms(), schema, siteValues);
         List<TurSNNLFilters.Filter> filters = new ArrayList<>();
         org.apache.lucene.analysis.CharArraySet stopWords = stopWords(searchLocale);
@@ -178,7 +195,45 @@ public class TurSNNLFilterService {
                 .ifPresent(filters::add));
 
         String q = StringUtils.hasText(flat.freeText()) ? flat.freeText().trim() : leftover(text, filters);
+        // T1359 — a word the parse left in q that names a value a facet holds is that filter.
+        List<TurSNNLValueNouns.Match> nouns = TurSNNLValueNouns.find(q, searchLocale, siteValues,
+                filters.stream().map(TurSNNLFilters.Filter::field).collect(Collectors.toSet()));
+        if (!nouns.isEmpty()) {
+            filters.addAll(nounFilters(text, q, nouns));
+            q = without(q, nouns);
+        }
         return new TurSNNLFilters(true, text, q, filters, fq(filters), dropped);
+    }
+
+    /** T1359 — one filter per field the nouns name, its words as the text spells them. */
+    private static List<TurSNNLFilters.Filter> nounFilters(String text, String q,
+            List<TurSNNLValueNouns.Match> nouns) {
+        Map<String, List<TurSNNLValueNouns.Match>> byField = nouns.stream()
+                .collect(Collectors.groupingBy(TurSNNLValueNouns.Match::field, LinkedHashMap::new,
+                        Collectors.toList()));
+        List<TurSNNLFilters.Filter> filters = new ArrayList<>();
+        byField.forEach((field, matches) -> {
+            List<String> values = matches.stream().map(TurSNNLValueNouns.Match::value).distinct().toList();
+            List<String> sourceWords = matches.stream().map(match -> {
+                String spelled = q.substring(match.start(), match.end());
+                return sourceWords(text, spelled).orElse(spelled);
+            }).toList();
+            double confidence = matches.stream().allMatch(TurSNNLValueNouns.Match::exact) ? LITERAL : INFERRED;
+            log.debug("[T1359] '{}' names {} of '{}'", sourceWords, values, field);
+            filters.add(new TurSNNLFilters.Filter(field, values, null, null, sourceWords, confidence, true));
+        });
+        return filters;
+    }
+
+    /** {@code q} with the nouns' words taken out. */
+    private static String without(String q, List<TurSNNLValueNouns.Match> nouns) {
+        StringBuilder rest = new StringBuilder(q);
+        for (TurSNNLValueNouns.Match match : nouns) {
+            for (int i = match.start(); i < match.end(); i++) {
+                rest.setCharAt(i, ' ');
+            }
+        }
+        return rest.toString().replaceAll("\\s+", " ").trim();
     }
 
     /**

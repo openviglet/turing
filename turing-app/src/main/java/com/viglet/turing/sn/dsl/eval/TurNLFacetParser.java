@@ -10,6 +10,7 @@
 package com.viglet.turing.sn.dsl.eval;
 
 import java.util.List;
+import java.util.Map;
 
 import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 
@@ -42,8 +43,21 @@ public interface TurNLFacetParser {
      * @param locale locale code (may be null).
      * @param query  the natural-language prose to parse.
      * @param schema the declared fields the parser may map onto.
+     * @param values T1359 — the values each facet field holds, the most common
+     *               first, so the parser can map a noun of the query ("palestras")
+     *               onto the value the site files it under ("Palestra"); empty when
+     *               the caller read none.
      */
-    record ParseRequest(String index, String locale, String query, List<TurNLFacetField> schema) {
+    record ParseRequest(String index, String locale, String query, List<TurNLFacetField> schema,
+            Map<String, List<String>> values) {
+
+        public ParseRequest {
+            values = values == null ? Map.of() : values;
+        }
+
+        public ParseRequest(String index, String locale, String query, List<TurNLFacetField> schema) {
+            this(index, locale, query, schema, Map.of());
+        }
     }
 
     /** Thrown when parsing cannot proceed or produce a valid query body. */

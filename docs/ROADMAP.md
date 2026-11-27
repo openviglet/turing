@@ -24,7 +24,6 @@
 
 ## Block CY — Filters from a sentence say what visitors say
 
-- 📋 **T1359** (deps: —) **A sentence's noun is not matched to facet values, so palestras stays a search word instead of the Palestra type filter** — The visitor who names what they want gets every page that mentions it, not the events of that kind. → §CXCII.1
 - 📋 **T1360** (deps: —) **Esta semana in a sentence yields no date filter, and the answer to what is on this week finds no source** — The most common question to a school's agenda gets an apology while the index holds this week's events. → §CXCII.2
 
 ## Done when — T1184
