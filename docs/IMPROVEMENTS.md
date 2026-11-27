@@ -2430,6 +2430,33 @@ client. A test with a facet shorter than its limit expects no "more" button.
 
 **Workaround.** None.
 
+### CLXXXII.27 A result says its type in the markup (T1367)
+
+**Where it happened.** fespsp-base FB112 (the design inventory for search, memory and AI
+screens), reading the markup `viglet-turing/search` renders on the fespsp-institucional
+search lab (image b64a3b0), and the overlay's (`public/overlay.js`).
+
+**What the markup gives a theme.** Each search result is `<li
+class="viglet-turing-search__result">`, the same for a page, a post, an event, a job, a
+book or a PDF; the type is only the text of `.viglet-turing-search__type` ("Evento",
+"Página"). The overlay's results are `.viglet-turing-overlay__result`, with
+`--with-image` as the only modifier. The related block's items are
+`.viglet-turing-related__item`.
+
+**What a theme cannot do with that.** The FESPSP design system shows a book with its
+cover in A4 portrait (`.fespsp-cover-a4`), a historical photo larger, a PDF with the
+document icon of its `doc-item`, an audio clip with a player line. With no per-type
+hook, the only way is matching the translated type label, which changes with the locale
+and the site's own labels, or reading the URL.
+
+**What it should do.** Every result element carries its post type (or Turing document
+type: `pdf`, a sibling site's type) as a modifier and a data attribute, e.g.
+`viglet-turing-search__result--livro` and `data-type="livro"`, on the search block's
+results, the overlay's results and the related block's items, server render and client
+render alike. Escaped as a class token. Documented in the plugin's theming notes.
+
+**Workaround.** None. FB121 in fespsp-base styles the per-type cards once this ships.
+
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report
