@@ -2571,7 +2571,9 @@ query:
 - the search block's BEM and preset variables, so a theme dresses it once;
 - the assistant hands a conversation over ("Continuar no Modo IA").
 
-**Workaround.** None; FI202 in fespsp-institucional waits on this.
+**Reference.** turing-insper's AI mode (React SPA on turing-react-sdk: AIModeToggle,
+AIModePanel, /chat/conversation over SSE, history in sessionStorage); it hides the
+sources and keeps no conversation in the URL. FI202 waits.
 
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
