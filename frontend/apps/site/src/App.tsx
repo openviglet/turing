@@ -7,8 +7,10 @@ import { AemPage } from "@/pages/aem";
 import { PersonaPage } from "@/pages/persona";
 import { SecurityPage } from "@/pages/security";
 import { WordPressPage } from "@/pages/wordpress";
+import { EducacaoPage } from "@/pages/educacao";
 import { ConsentBanner } from "@/components/consent-banner";
 import { FEATURE_DETAILS } from "@/lib/site-content";
+import { localeOf } from "@/lib/i18n";
 import { matchRoute } from "./route-match";
 
 /** Standalone (non-feature) routes with their own page component. */
@@ -18,6 +20,7 @@ export const AEM_PATH = "/aem-search/";
 export const PERSONA_PATH = "/persona/";
 export const SECURITY_PATH = "/security/";
 export const WORDPRESS_PATH = "/wordpress/";
+export const EDUCACAO_PATH = "/educacao/";
 
 export default function App({ path = "/" }: Readonly<{ path?: string }>) {
   // Cross-page links to a home anchor (e.g. "/#playground") full-load "/" and
@@ -52,7 +55,7 @@ export default function App({ path = "/" }: Readonly<{ path?: string }>) {
     <>
       <Page path={path} />
       {/* T1097 — GA loads only after the visitor opts in. */}
-      <ConsentBanner />
+      <ConsentBanner locale={localeOf(path)} />
     </>
   );
 }
@@ -64,6 +67,7 @@ function Page({ path }: Readonly<{ path: string }>) {
   if (/^\/persona\/?$/.test(path)) return <PersonaPage />;
   if (/^\/security\/?$/.test(path)) return <SecurityPage />;
   if (/^\/wordpress\/?$/.test(path)) return <WordPressPage />;
+  if (/^\/educacao\/?$/.test(path)) return <EducacaoPage />;
   const slug = matchRoute(path);
   if (slug) return <FeaturePage detail={FEATURE_DETAILS[slug]} />;
   return <LandingPage />;

@@ -2,16 +2,22 @@ import { renderToString } from "react-dom/server";
 import App from "./App.tsx";
 import { ThemeProvider } from "@/components/theme-provider";
 import { FEATURE_DETAILS, FEATURE_SLUGS } from "@/lib/site-content";
+import { EDUCACAO_META } from "@/lib/educacao-content";
+import { localeOf, type Locale } from "@/lib/i18n";
 
 export interface PrerenderRoute {
   /** URL path (also the output directory under dist/). */
   path: string;
   title: string;
   description: string;
+  /** The page's language, written to `<html lang>` and `og:locale`. */
+  lang: Locale;
 }
 
+type RouteCopy = Omit<PrerenderRoute, "lang">;
+
 /** Every route the build prerenders to its own static HTML file. */
-export const routes: PrerenderRoute[] = [
+const copy: RouteCopy[] = [
   {
     path: "/",
     title: "Viglet Turing · Agentic Enterprise Search",
@@ -62,7 +68,10 @@ export const routes: PrerenderRoute[] = [
     description:
       "A WordPress plugin that indexes posts, pages and WooCommerce products into Viglet Turing: search as you type, filters from a sentence, cited answers, a shopping copilot and search insights. Watch the demo store, or try it in your browser. Open source.",
   },
+  { path: "/educacao/", title: EDUCACAO_META.title, description: EDUCACAO_META.description },
 ];
+
+export const routes: PrerenderRoute[] = copy.map((r) => ({ ...r, lang: localeOf(r.path) }));
 
 /** Render a route's app shell to an HTML string for the prerender step. */
 export function render(path: string): string {

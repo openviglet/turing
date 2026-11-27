@@ -10,9 +10,9 @@ import {
 import { ModeToggle } from "@/components/mode-toggle";
 import { Container, Logo } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
-import { PRODUCTS } from "@/components/products";
 import { cn } from "@/lib/utils";
 import { withBase } from "@/lib/site-url";
+import { CHROME, type Locale } from "@/lib/i18n";
 
 // Hrefs are root-anchored ("/#…") so they also work from the feature pages:
 // the browser navigates home and scrolls to the section.
@@ -21,35 +21,45 @@ import { withBase } from "@/lib/site-url";
 // pulled OUT of the Solutions dropdown as a top-level link because it is the
 // headline solution, but it is an ordinary link like the rest (T1269: the hub's
 // header has no highlighted pills).
-const NAV_LINKS = [
-  { label: "Try it live", href: LINKS.explore },
-  { label: "Docs", href: LINKS.docs },
-  { label: "AEM AI Search", href: withBase("/aem-search/") },
-];
+function navLinks(locale: Locale) {
+  const t = CHROME[locale].nav;
+  return [
+    { label: t.explore, href: LINKS.explore },
+    { label: t.docs, href: LINKS.docs },
+    { label: t.aem, href: withBase("/aem-search/") },
+  ];
+}
 
-const NAV_GROUPS = [
-  {
-    label: "Product",
-    items: [
-      { label: "Capabilities", href: withBase("/#features") },
-      { label: "AI Personas", href: withBase("/persona/") },
-      { label: `Why ${PRODUCTS.turing.fullName}`, href: withBase("/#why") },
-      { label: "Developers", href: withBase("/#developers") },
-      { label: "Marketplace", href: withBase("/#marketplace") },
-    ],
-  },
-  {
-    label: "Solutions",
-    items: [
-      { label: "WordPress & WooCommerce", href: withBase("/wordpress/") },
-      { label: "Security & data residency", href: withBase("/security/") },
-      { label: "Compare", href: withBase("/compare/") },
-      { label: "Migrate", href: withBase("/migrate/") },
-    ],
-  },
-];
+function navGroups(locale: Locale) {
+  const t = CHROME[locale].nav;
+  return [
+    {
+      label: t.product,
+      items: [
+        { label: t.capabilities, href: withBase("/#features") },
+        { label: t.personas, href: withBase("/persona/") },
+        { label: t.why, href: withBase("/#why") },
+        { label: t.developers, href: withBase("/#developers") },
+        { label: t.marketplace, href: withBase("/#marketplace") },
+      ],
+    },
+    {
+      label: t.solutions,
+      items: [
+        { label: t.wordpress, href: withBase("/wordpress/") },
+        { label: t.education, href: withBase("/educacao/") },
+        { label: t.security, href: withBase("/security/") },
+        { label: t.compare, href: withBase("/compare/") },
+        { label: t.migrate, href: withBase("/migrate/") },
+      ],
+    },
+  ];
+}
 
-export function SiteNav() {
+export function SiteNav({ locale = "en" }: Readonly<{ locale?: Locale }>) {
+  const t = CHROME[locale].nav;
+  const NAV_LINKS = navLinks(locale);
+  const NAV_GROUPS = navGroups(locale);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
@@ -80,7 +90,7 @@ export function SiteNav() {
     >
       <Container className="flex h-16 items-center gap-4">
         <div className="flex shrink-0 items-center gap-2.5">
-          <a href={withBase("/")} className="text-base" aria-label={`${PRODUCTS.turing.fullName} home`}>
+          <a href={withBase("/")} className="text-base" aria-label={t.home}>
             {/* T1268: the full product name shows at every width (never an
                 icon-only or shortened mark). Below sm the layout makes the room
                 instead: a smaller mark, and "Get started" moves into the menu. */}
@@ -93,7 +103,7 @@ export function SiteNav() {
             href={LINKS.portfolio}
             className="hidden items-center gap-1 text-xs font-semibold whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
           >
-            part of viglet.org
+            {t.portfolio}
             <ArrowUpRight className="size-3" />
           </a>
         </div>
@@ -137,7 +147,7 @@ export function SiteNav() {
         <div className="ml-auto flex items-center gap-2">
           <Button asChild size="sm" className="hidden sm:inline-flex">
             <a href={LINKS.getStarted}>
-              Get started
+              {t.getStarted}
               <ArrowRight className="size-4" />
             </a>
           </Button>
@@ -147,7 +157,7 @@ export function SiteNav() {
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-label={menuOpen ? t.closeMenu : t.openMenu}
             aria-expanded={menuOpen}
             className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:hidden"
           >
@@ -162,7 +172,7 @@ export function SiteNav() {
           <Container className="flex flex-col py-3">
             <Button asChild size="sm" className="mb-2 w-full sm:hidden">
               <a href={LINKS.getStarted} onClick={closeMenu}>
-                Get started
+                {t.getStarted}
                 <ArrowRight className="size-4" />
               </a>
             </Button>
@@ -198,7 +208,7 @@ export function SiteNav() {
               onClick={closeMenu}
               className="mt-3 inline-flex w-fit items-center gap-1 px-2 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
             >
-              part of viglet.org
+              {t.portfolio}
               <ArrowUpRight className="size-3" />
             </a>
           </Container>

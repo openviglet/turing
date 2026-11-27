@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { Container } from "@/components/brand";
 import { cn } from "@/lib/utils";
 import { withBase } from "@/lib/site-url";
+import { CHROME, type Locale } from "@/lib/i18n";
 
 /**
  * T1269: the one hero every marketing subpage uses, in the viglet.org hub's
@@ -19,6 +20,7 @@ export function PageHero({
   actions,
   aside,
   back = true,
+  locale = "en",
 }: Readonly<{
   eyebrow: ReactNode;
   title: ReactNode;
@@ -26,6 +28,7 @@ export function PageHero({
   actions?: ReactNode;
   aside?: ReactNode;
   back?: boolean;
+  locale?: Locale;
 }>) {
   const copy = (
     <div className="min-w-0">
@@ -34,7 +37,7 @@ export function PageHero({
           href={withBase("/")}
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
         >
-          <ArrowLeft className="size-4" /> Back to overview
+          <ArrowLeft className="size-4" /> {CHROME[locale].hero.back}
         </a>
       )}
       <p className={cn("text-xs font-semibold tracking-wider text-muted-foreground uppercase", back && "mt-6")}>

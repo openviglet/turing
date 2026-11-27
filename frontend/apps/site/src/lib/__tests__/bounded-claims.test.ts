@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import * as siteContent from "@/lib/site-content";
+import * as educacaoContent from "@/lib/educacao-content";
+import { CHROME } from "@/lib/i18n";
 import llmsTxt from "../../../public/llms.txt?raw";
 import aemSearchMd from "../../../public/aem-search.md?raw";
 import personaMd from "../../../public/persona.md?raw";
@@ -18,6 +20,11 @@ const UNIVERSAL = [
   /\bin (days|minutes)\b|not quarters|week engagement/i,
   /Time to first result/i,
   /Azure OpenAI/i,
+  // The same rule for the pages written in Brazilian Portuguese.
+  /\bqualquer (LLM|modelo|motor)\b/i,
+  /\bnunca sai\b|\bjamais sai\b/i,
+  /\bem (dias|minutos|poucos minutos)\b/i,
+  /\b(100% seguro|zero alucina)/i,
 ];
 
 function strings(value: unknown, out: string[] = []): string[] {
@@ -31,6 +38,11 @@ function strings(value: unknown, out: string[] = []): string[] {
 describe("bounded claims (T1272)", () => {
   it("site content makes no universal or delivery-time claim", () => {
     const hits = strings(siteContent).filter((s) => UNIVERSAL.some((re) => re.test(s)));
+    expect(hits).toEqual([]);
+  });
+
+  it("the pt-BR pages and chrome make no universal or delivery-time claim", () => {
+    const hits = strings([educacaoContent, CHROME]).filter((s) => UNIVERSAL.some((re) => re.test(s)));
     expect(hits).toEqual([]);
   });
 

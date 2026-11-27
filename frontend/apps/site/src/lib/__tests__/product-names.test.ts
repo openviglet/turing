@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import * as siteContent from "@/lib/site-content";
+import * as educacaoContent from "@/lib/educacao-content";
+import { CHROME } from "@/lib/i18n";
 import { PRODUCTS } from "@/components/products";
 import llmsTxt from "../../../public/llms.txt?raw";
 import aemSearchMd from "../../../public/aem-search.md?raw";
@@ -30,6 +32,14 @@ describe("product names (T1268)", () => {
 
   it("site content never uses a bare product name", () => {
     const bare = strings(siteContent, "site-content", []).filter(([, s]) => BARE.test(s));
+    expect(bare).toEqual([]);
+  });
+
+  it("the pt-BR pages and chrome never use a bare product name", () => {
+    const bare = [
+      ...strings(educacaoContent, "educacao-content", []),
+      ...strings(CHROME, "chrome", []),
+    ].filter(([, s]) => BARE.test(s));
     expect(bare).toEqual([]);
   });
 

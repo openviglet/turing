@@ -9,6 +9,7 @@ import {
   subscribeConsent,
   type Consent,
 } from "@/lib/analytics";
+import { CHROME, type Locale } from "@/lib/i18n";
 
 const undecidedNow = () => getConsent() === null;
 /** The prerendered HTML never carries the banner, so hydration starts hidden. */
@@ -21,7 +22,8 @@ const undecidedOnServer = () => false;
  * refusing must be as easy as accepting). The footer's "Cookie settings" link
  * reopens it.
  */
-export function ConsentBanner() {
+export function ConsentBanner({ locale = "en" }: Readonly<{ locale?: Locale }>) {
+  const t = CHROME[locale].consent;
   const undecided = useSyncExternalStore(subscribeConsent, undecidedNow, undecidedOnServer);
   const [reopened, setReopened] = useState(false);
 
@@ -41,24 +43,20 @@ export function ConsentBanner() {
 
   return (
     <section
-      aria-label="Cookie consent"
+      aria-label={t.region}
       aria-live="polite"
       className="fixed inset-x-0 bottom-0 z-50 p-4 sm:p-6"
     >
       <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-card p-5 shadow-xl sm:p-6">
         <div className="flex items-start gap-4">
           <div className="min-w-0 flex-1">
-            <p className="mb-1 font-bold text-foreground">We respect your privacy</p>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              We use Google Analytics cookies only to understand how the site is used, never
-              for ads. Nothing is loaded until you choose. You can change this anytime from
-              the footer.
-            </p>
+            <p className="mb-1 font-bold text-foreground">{t.title}</p>
+            <p className="text-sm leading-relaxed text-muted-foreground">{t.body}</p>
           </div>
           <button
             type="button"
             onClick={() => choose("denied")}
-            aria-label="Decline and close"
+            aria-label={t.declineAndClose}
             className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
           >
             <X className="size-4" />
@@ -66,9 +64,9 @@ export function ConsentBanner() {
         </div>
         <div className="mt-4 flex flex-wrap justify-end gap-3">
           <Button variant="outline" onClick={() => choose("denied")}>
-            Decline
+            {t.decline}
           </Button>
-          <Button onClick={() => choose("granted")}>Accept analytics</Button>
+          <Button onClick={() => choose("granted")}>{t.accept}</Button>
         </div>
       </div>
     </section>

@@ -57,6 +57,18 @@ function buildHtml(route) {
   const desc = route.description;
 
   let html = template;
+  // The route's language (src/lib/i18n.ts): a pt-BR page is read, hyphenated and
+  // indexed as Portuguese, and says so to link previews through og:locale.
+  const lang = route.lang ?? "en";
+  html = replaceOrThrow(html, /<html lang="[^"]*">/, `<html lang="${lang}">`, "<html lang>");
+  if (lang !== "en") {
+    html = replaceOrThrow(
+      html,
+      /(<meta\s+property="og:type")/,
+      `<meta property="og:locale" content="${lang.replace("-", "_")}" />\n    $1`,
+      "og:type meta"
+    );
+  }
   html = replaceOrThrow(html, /<title>[\s\S]*?<\/title>/, `<title>${title}</title>`, "<title>");
   html = replaceOrThrow(
     html,
