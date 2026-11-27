@@ -210,7 +210,8 @@ public class TurSNNLFilterService {
             spanOverlaps(filters, dateFacets.endFields());
         }
 
-        String q = StringUtils.hasText(flat.freeText()) ? flat.freeText().trim() : leftover(text, filters);
+        // T1361 — each filter's words leave q, whether q is the parse's free text or the request.
+        String q = leftover(StringUtils.hasText(flat.freeText()) ? flat.freeText().trim() : text, filters);
         // T1359 — a word the parse left in q that names a value a facet holds is that filter.
         List<TurSNNLValueNouns.Match> nouns = TurSNNLValueNouns.find(q, searchLocale, siteValues,
                 filters.stream().map(TurSNNLFilters.Filter::field).collect(Collectors.toSet()));
@@ -218,7 +219,23 @@ public class TurSNNLFilterService {
             filters.addAll(nounFilters(text, q, nouns));
             q = without(q, nouns);
         }
+        // T1361 — a word naming the value its field already filters says it again: it leaves q.
+        q = without(q, TurSNNLValueNouns.find(q, searchLocale, filteredValues(filters), Set.of()));
+        // a q of stop words alone ("o que tem") narrows nothing the filters did not
+        if (StringUtils.hasText(searchLocale) && com.viglet.turing.searchengine.TurSNQueryRelaxer.onlyStopWords(q,
+                Locale.forLanguageTag(searchLocale.replace('_', '-')))) {
+            q = "";
+        }
         return new TurSNNLFilters(true, text, q, filters, fq(filters), dropped);
+    }
+
+    /** T1361 — the values each value filter carries, by field. */
+    private static Map<String, List<String>> filteredValues(List<TurSNNLFilters.Filter> filters) {
+        Map<String, List<String>> values = new LinkedHashMap<>();
+        filters.stream().filter(filter -> !filter.isRange() && !filter.values().isEmpty())
+                .forEach(filter -> values.computeIfAbsent(filter.field(), k -> new ArrayList<>())
+                        .addAll(filter.values()));
+        return values;
     }
 
     /**
@@ -274,22 +291,31 @@ public class TurSNNLFilterService {
     /**
      * T1360 — each date range on a field whose custom facet spans two fields becomes
      * the overlap that facet's buckets apply (T1224): it starts by the range's end
-     * and ends from its start, so an exhibition under way is on this week.
+     * and ends from its start, so an exhibition under way is on this week. T1361 — a
+     * range the parse put on the end field is the same period and becomes the same
+     * pair, and a span takes one pair however many of its fields were ranged.
      */
     private static void spanOverlaps(List<TurSNNLFilters.Filter> filters, Map<String, String> endFields) {
         if (endFields.isEmpty()) {
             return;
         }
+        Map<String, String> startFields = new LinkedHashMap<>();
+        endFields.forEach((start, end) -> startFields.putIfAbsent(end, start));
+        Set<String> overlapped = new LinkedHashSet<>();
         List<TurSNNLFilters.Filter> spanned = new ArrayList<>();
         for (TurSNNLFilters.Filter filter : filters) {
-            String endField = filter.isRange() ? endFields.get(filter.field()) : null;
-            if (endField == null || filter.rangeStart() == null || filter.rangeEnd() == null) {
+            String startField = !filter.isRange() ? null
+                    : endFields.containsKey(filter.field()) ? filter.field() : startFields.get(filter.field());
+            if (startField == null || filter.rangeStart() == null || filter.rangeEnd() == null) {
                 spanned.add(filter);
                 continue;
             }
-            spanned.add(new TurSNNLFilters.Filter(filter.field(), List.of(), null, filter.rangeEnd(),
+            if (!overlapped.add(startField)) {
+                continue;
+            }
+            spanned.add(new TurSNNLFilters.Filter(startField, List.of(), null, filter.rangeEnd(),
                     filter.sourceWords(), filter.confidence(), filter.grounded()));
-            spanned.add(new TurSNNLFilters.Filter(endField, List.of(), filter.rangeStart(), null,
+            spanned.add(new TurSNNLFilters.Filter(endFields.get(startField), List.of(), filter.rangeStart(), null,
                     filter.sourceWords(), filter.confidence(), filter.grounded()));
         }
         filters.clear();
@@ -845,7 +871,9 @@ public class TurSNNLFilterService {
     static String leftover(String text, List<TurSNNLFilters.Filter> filters) {
         boolean[] removed = new boolean[text.length()];
         for (TurSNNLFilters.Filter filter : filters) {
-            for (String words : filter.sourceWords()) {
+            for (String source : filter.sourceWords()) {
+                // T1361 — the parse's free text may spell the words in another case or accenting
+                String words = text.contains(source) ? source : sourceWords(text, source).orElse(source);
                 int at = claim(text, words, removed);
                 for (int i = at; at >= 0 && i < at + words.length(); i++) {
                     removed[i] = true;

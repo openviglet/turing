@@ -2427,34 +2427,6 @@ module boundaries files here.
 
 ## CXCII Filters from a sentence say what visitors say
 
-### CXCII.3 q and fq that a search can run (T1361)
-
-**Where it happened.** fespsp-institucional FI146, search lab, image a35a636, after
-T1359 and T1360. SN site `fespsp`, pt_BR, `gpt-4o-mini`; `evento_inicio_range` spans
-`evento_inicio` to `evento_ate` (T1356). Today 2026-11-27.
-
-**The calls.** `POST /api/sn/fespsp/nl-filters` with "palestras sobre democracia em
-novembro" gives the whole sentence as `q`, and fq `tipo_evento:Palestra`, the overlap
-pair and `evento_ate:[2026-11-01 TO 2026-11-30]`. "o que tem esta semana" gives `q: "o
-que tem"` and the week's pair. Through `/search` both give 0 results; with `q=*` the
-same fq give the right events.
-
-**Causes in the code** (`TurSNNLFilterService.ground`).
-1. A parse that returns free text keeps it as `q`, and `leftover()` never runs; and
-   "palestras" stays because the noun matcher skips a field already filtered.
-2. A `q` of only stop words is kept.
-3. The parse's own range on the end field passes `spanOverlaps`, which rewrites only
-   the start field.
-
-**What it should do.** Each filter's source words leave `q`, whatever its source; a word
-naming the value its field already filters leaves `q` with no second filter (the
-rest-api sentence on already-filtered fields changes with it). A stop-word-only `q`
-comes back empty, as a fully consumed one does, not `*`. A date range on either field of
-a span becomes the overlap pair alone. Tests: a range on the end field only; the
-returned `q` (empty included) and `fq` through `/search` return the documents.
-
-**Workaround.** None. FI146 waits on this line.
-
 ### CXCII.4 The answer grounds in the period (T1362)
 
 **Where it happened.** fespsp-institucional FI146, search lab, image a35a636, after

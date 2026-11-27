@@ -632,7 +632,51 @@ class TurSNNLFilterServiceTest {
             assertThat(filter.sourceWords()).containsExactly("esta semana");
             assertThat(filter.confidence()).isEqualTo(TurSNNLFilterService.LITERAL);
         });
-        assertThat(result.q()).isEqualTo("o que tem");
+        // T1361 — "o que tem" is only stop words: it would narrow nothing, so q is empty
+        assertThat(result.q()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("T1361: the filters' words leave the parse's free text, and an end-field range is the overlap")
+    void theSentencesOwnQAndFqCanRun() {
+        when(turSNSiteRepository.findByNameIgnoreCase("vagas")).thenReturn(Optional.of(site));
+        when(parser.isAvailable()).thenReturn(true);
+        TurSNSiteFieldExt start = field("data_inicio", TurSEFieldType.DATE, true);
+        start.setId("start-id");
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+                field("tipo_evento", TurSEFieldType.STRING, true), start,
+                field("data_fim", TurSEFieldType.DATE, false), field("title", TurSEFieldType.TEXT, false)));
+        when(customFacetCatalog.customFacets(site)).thenReturn(List.of(new com.viglet.turing.searchengine.spi
+                .TurSECustomFacet("Quando", 1, List.of(), "start-id", "data_fim", null, null)));
+        siteHolds(Map.of("f0", List.of("Palestra", "Debate")));
+        service.setClockForTest(java.time.Clock.fixed(java.time.Instant.parse("2026-11-27T12:00:00Z"),
+                java.time.ZoneOffset.UTC));
+        parserAnswers("""
+                {"query":{"bool":{
+                  "filter":[{"term":{"tipo_evento":"Palestra"}},
+                            {"range":{"data_fim":{"gte":"2026-11-01","lte":"2026-11-30"}}}],
+                  "must":[{"match":{"_text_":"palestras sobre democracia em novembro"}}]}}}""");
+
+        TurSNNLFilters result = service.parse("vagas", "pt_BR", "palestras sobre democracia em novembro");
+
+        assertThat(result.fq()).containsExactly("tipo_evento:Palestra", "data_inicio:[* TO 2026-11-30]",
+                "data_fim:[2026-11-01 TO *]");
+        assertThat(result.q()).isEqualTo("sobre democracia");
+    }
+
+    @Test
+    @DisplayName("T1361: a word naming the value its field already filters leaves q, with no second filter")
+    void aWordNamingTheFilteredValueLeavesQ() {
+        eventSite();
+        parserAnswers("""
+                {"query":{"bool":{
+                  "filter":[{"term":{"tipo_evento":"Palestra"}}],
+                  "must":[{"match":{"_text_":"palestras sobre democracia"}}]}}}""");
+
+        TurSNNLFilters result = service.parse("vagas", "pt_BR", "palestras sobre democracia");
+
+        assertThat(result.fq()).containsExactly("tipo_evento:Palestra");
+        assertThat(result.q()).isEqualTo("sobre democracia");
     }
 
     @Test

@@ -1767,6 +1767,7 @@
 - **T1330** — An SN site has a time zone (console, manifest timeZone, export) that filters read from a sentence resolve today and tomorrow in; the Java SDK and the WordPress plugin send it.
 - **T1359** — A noun naming a facet value becomes its filter: palestras is tipo_evento:Palestra. The prompt lists each facet's values and a stem-folded pass grounds what is left in q, one value of one field.
 - **T1360** — Esta semana dates a request: today, tonight and this week resolve, land on the date facet as an overlap, and chat and /answer ground in the period's documents from the site search.
+- **T1361** — nl-filters takes each filter's words out of q, also from the parse's free text, empties a stop-word-only q, and turns an end-field date range into the span's overlap pair (design §CXCII.3 recorded in `frontend/apps/docs/src/content/docs/rest-api.md`).
 
 ## Block CZ — Backend modules with verified boundaries
 
