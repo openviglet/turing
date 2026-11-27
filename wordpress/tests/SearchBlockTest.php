@@ -50,6 +50,25 @@ final class SearchBlockTest extends PluginTestCase {
 	}
 
 	/**
+	 * T1374: the submit button says the verb, its own msgid apart from the noun "Search", and a
+	 * block's own text replaces it; a blank one keeps the verb.
+	 */
+	public function test_the_submit_button_says_the_verb_or_the_blocks_own_words(): void {
+		$asked = array();
+		Functions\when( '_x' )->alias(
+			static function ( $text, $context ) use ( &$asked ) {
+				$asked[] = array( $text, $context );
+				return 'Buscar';
+			}
+		);
+
+		$this->assertSame( 'Buscar', Viglet_Turing_Search_Block::button_text( array() ) );
+		$this->assertSame( 'Buscar', Viglet_Turing_Search_Block::button_text( array( 'buttonText' => '  ' ) ) );
+		$this->assertSame( array( 'Search', 'submit button' ), $asked[0] );
+		$this->assertSame( 'Pesquisar', Viglet_Turing_Search_Block::button_text( array( 'buttonText' => ' Pesquisar ' ) ) );
+	}
+
+	/**
 	 * T1368: the block starts from the address bar's query, unless a theme gives another
 	 * through viglet_turing_search_initial_query, such as a 404's words.
 	 */

@@ -227,6 +227,19 @@ class Viglet_Turing_Search_Block {
 	}
 
 	/**
+	 * The submit button's text (T1374): the block's own `buttonText`, else "Search" as a verb,
+	 * its own msgid in the "submit button" context, so pt_BR reads "Buscar" on the button while
+	 * the column and the panel keep the noun "Busca".
+	 *
+	 * @param array $attributes The search block's attributes.
+	 */
+	public static function button_text( array $attributes ): string {
+		$own = trim( (string) ( $attributes['buttonText'] ?? '' ) );
+
+		return '' !== $own ? $own : _x( 'Search', 'submit button', 'viglet-turing-search' );
+	}
+
+	/**
 	 * The parent's attributes as an inner block sees them through its context.
 	 *
 	 * @param array $context The inner block's context.

@@ -10,6 +10,7 @@
 	"textdomain": "viglet-turing-search",
 	"providesContext": {
 		"viglet-turing/search/placeholder": "placeholder",
+		"viglet-turing/search/buttonText": "buttonText",
 		"viglet-turing/search/showFacets": "showFacets",
 		"viglet-turing/search/showSort": "showSort",
 		"viglet-turing/search/showAnswer": "showAnswer",
@@ -24,6 +25,10 @@
 	},
 	"attributes": {
 		"placeholder": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonText": {
 			"type": "string",
 			"default": ""
 		},

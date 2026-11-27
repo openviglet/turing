@@ -12,6 +12,7 @@
 
 	const el = wp.element.createElement;
 	const __ = wp.i18n.__;
+	const _x = wp.i18n._x;
 	const {
 		useBlockProps,
 		useInnerBlocksProps,
@@ -46,7 +47,7 @@
 	 *
 	 * @param {Object}                       props               The block's props.
 	 * @param {string}                       props.clientId      The block's id in the editor.
-	 * @param {Object}                       props.attributes    placeholder, showFacets, showSort, perPage.
+	 * @param {Object}                       props.attributes    placeholder, buttonText, showFacets, showSort, perPage.
 	 * @param {(attributes: Object) => void} props.setAttributes Updates them.
 	 */
 	function Edit( { clientId, attributes, setAttributes } ) {
@@ -115,6 +116,18 @@
 						value: attributes.placeholder,
 						onChange: ( placeholder ) =>
 							setAttributes( { placeholder } ),
+					} ),
+					// T1374: the submit button's own words, the verb by default.
+					el( TextControl, {
+						label: __( 'Button text', 'viglet-turing-search' ),
+						placeholder: _x(
+							'Search',
+							'submit button',
+							'viglet-turing-search'
+						),
+						value: attributes.buttonText,
+						onChange: ( buttonText ) =>
+							setAttributes( { buttonText } ),
 					} ),
 					// D306: a box scoped to one section of the site, not a filter to clear.
 					el( FormTokenField, {

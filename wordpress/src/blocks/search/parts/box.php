@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $viglet_turing_query       = Viglet_Turing_Search_Block::query( $attributes );
 $viglet_turing_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' ) ? $attributes['placeholder'] : __( 'Search…', 'viglet-turing-search' );
+$viglet_turing_button      = Viglet_Turing_Search_Block::button_text( $attributes );
 ?>
 <form role="search" class="viglet-turing-search__form" data-wp-on--submit="actions.submit">
 	<label class="screen-reader-text" for="<?php echo esc_attr( $viglet_turing_id ); ?>"><?php esc_html_e( 'Search', 'viglet-turing-search' ); ?></label>
@@ -45,7 +46,7 @@ $viglet_turing_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' 
 			<span class="screen-reader-text"><?php esc_html_e( 'Clear the search', 'viglet-turing-search' ); ?></span>
 		</button>
 	</div>
-	<button type="submit" class="wp-element-button"><?php esc_html_e( 'Search', 'viglet-turing-search' ); ?></button>
+	<button type="submit" class="wp-element-button"><?php echo esc_html( $viglet_turing_button ); ?></button>
 	<div class="viglet-turing-search__popup" hidden data-wp-bind--hidden="!state.isExpanded" data-wp-on--mousedown="actions.keepFocus">
 		<ul
 			id="<?php echo esc_attr( $viglet_turing_id ); ?>-suggestions"

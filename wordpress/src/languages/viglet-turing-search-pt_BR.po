@@ -29,14 +29,13 @@ msgid "Indexing"
 msgstr "Indexação"
 
 #: src/admin/views/settings-page.php:48
-#: src/blocks/search/parts/box.php:22
-#: src/blocks/search/parts/box.php:48
+#: src/blocks/search/parts/box.php:23
 #: src/includes/class-viglet-turing-native-search.php:344
 #: src/includes/class-viglet-turing-post-state.php:110
 #: assets/admin/insights.js:165
 #: assets/admin/tuning.js:399
 #: src/admin/js/editor-panel.js:324
-#: src/admin/js/search-block-editor.js:112
+#: src/admin/js/search-block-editor.js:113
 msgid "Search"
 msgstr "Busca"
 
@@ -640,14 +639,14 @@ msgid "Nothing is listening at %s on that port: Viglet Turing is down, or the po
 msgstr "Nada responde em %s nessa porta: o Viglet Turing está fora do ar, ou a porta está errada."
 
 #. translators: %d: how many documents were indexed.
-#: src/includes/class-viglet-turing-indexer.php:291
+#: src/includes/class-viglet-turing-indexer.php:325
 #: assets/admin/setup.js:133
 #, php-format,js-format
 msgid "Indexing complete. %d documents indexed."
 msgstr "Indexação concluída. %d documentos indexados."
 
 #. translators: 1: documents indexed so far, 2: documents to index in all.
-#: src/includes/class-viglet-turing-indexer.php:293
+#: src/includes/class-viglet-turing-indexer.php:327
 #, php-format
 msgid "Indexed %1$d of %2$d documents..."
 msgstr "%1$d de %2$d documentos indexados..."
@@ -1124,15 +1123,15 @@ msgid "Reindex now"
 msgstr "Reindexar agora"
 
 #: src/admin/js/copilot-block-editor.js:53
-#: src/admin/js/search-block-editor.js:114
+#: src/admin/js/search-block-editor.js:115
 msgid "Placeholder"
 msgstr "Texto de exemplo"
 
-#: src/admin/js/search-block-editor.js:143
+#: src/admin/js/search-block-editor.js:156
 msgid "Show filters (facets)"
 msgstr "Mostrar filtros (facetas)"
 
-#: src/admin/js/search-block-editor.js:305
+#: src/admin/js/search-block-editor.js:318
 msgid "Viglet Turing search"
 msgstr "Busca Viglet Turing"
 
@@ -1164,7 +1163,7 @@ msgctxt "block keyword"
 msgid "facets"
 msgstr "facetas"
 
-#: src/blocks/search/parts/box.php:54
+#: src/blocks/search/parts/box.php:55
 msgid "Suggestions"
 msgstr "Sugestões"
 
@@ -1184,11 +1183,11 @@ msgstr "Tentar de novo"
 msgid "Search with WordPress instead"
 msgstr "Buscar com o WordPress"
 
-#: src/blocks/search/parts/box.php:45
+#: src/blocks/search/parts/box.php:46
 msgid "Clear the search"
 msgstr "Limpar a busca"
 
-#: src/blocks/search/parts/box.php:67
+#: src/blocks/search/parts/box.php:68
 msgid "Clear recent searches"
 msgstr "Limpar buscas recentes"
 
@@ -1228,11 +1227,11 @@ msgstr "Mais antigos"
 msgid "Sort by"
 msgstr "Ordenar por"
 
-#: src/admin/js/search-block-editor.js:152
+#: src/admin/js/search-block-editor.js:165
 msgid "Let visitors sort (relevance, newest, oldest)"
 msgstr "Deixar o visitante ordenar (relevância, mais recentes, mais antigos)"
 
-#: src/admin/js/search-block-editor.js:281
+#: src/admin/js/search-block-editor.js:294
 msgid "Results per page"
 msgstr "Resultados por página"
 
@@ -1285,51 +1284,51 @@ msgstr "Enter: todos os resultados · Setas: escolher um · Esc: fechar"
 msgid "Search (Ctrl+K)"
 msgstr "Buscar (Ctrl+K)"
 
-#: src/admin/js/search-block-editor.js:213
+#: src/admin/js/search-block-editor.js:226
 msgid "Where the filters sit"
 msgstr "Onde ficam os filtros"
 
-#: src/admin/js/search-block-editor.js:220
+#: src/admin/js/search-block-editor.js:233
 msgid "Left"
 msgstr "À esquerda"
 
-#: src/admin/js/search-block-editor.js:224
+#: src/admin/js/search-block-editor.js:237
 msgid "Right"
 msgstr "À direita"
 
-#: src/admin/js/search-block-editor.js:228
+#: src/admin/js/search-block-editor.js:241
 msgid "Above the results"
 msgstr "Acima dos resultados"
 
-#: src/admin/js/search-block-editor.js:239
+#: src/admin/js/search-block-editor.js:252
 msgid "Results as"
 msgstr "Resultados em"
 
 #: src/admin/js/related-block-editor.js:118
-#: src/admin/js/search-block-editor.js:243
+#: src/admin/js/search-block-editor.js:256
 msgid "A list"
 msgstr "Lista"
 
 #: src/admin/js/related-block-editor.js:114
-#: src/admin/js/search-block-editor.js:247
+#: src/admin/js/search-block-editor.js:260
 msgid "A grid"
 msgstr "Grade"
 
 #: src/admin/js/related-block-editor.js:127
-#: src/admin/js/search-block-editor.js:257
+#: src/admin/js/search-block-editor.js:270
 msgid "Show the image"
 msgstr "Mostrar a imagem"
 
-#: src/admin/js/search-block-editor.js:261
+#: src/admin/js/search-block-editor.js:274
 msgid "Show the type"
 msgstr "Mostrar o tipo"
 
 #: src/admin/js/related-block-editor.js:131
-#: src/admin/js/search-block-editor.js:265
+#: src/admin/js/search-block-editor.js:278
 msgid "Show the date"
 msgstr "Mostrar a data"
 
-#: src/admin/js/search-block-editor.js:269
+#: src/admin/js/search-block-editor.js:282
 msgid "Show the snippet"
 msgstr "Mostrar o trecho"
 
@@ -1455,11 +1454,11 @@ msgstr "Não"
 msgid "Thank you."
 msgstr "Obrigado."
 
-#: src/admin/js/search-block-editor.js:160
+#: src/admin/js/search-block-editor.js:173
 msgid "Answer questions from this site’s content"
 msgstr "Responder perguntas com o conteúdo deste site"
 
-#: src/admin/js/search-block-editor.js:164
+#: src/admin/js/search-block-editor.js:177
 msgid "A search that reads as a question gets Viglet Turing’s answer, with its sources, above the results. Each one is an LLM call; it shows only when Viglet Turing cites sources."
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Viglet Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Viglet Turing cita fontes."
 
@@ -1533,7 +1532,7 @@ msgstr "O Viglet Turing não tem um site SN chamado %s."
 msgid "A synonym needs two words or more."
 msgstr "Um sinônimo precisa de duas palavras ou mais."
 
-#: src/includes/class-viglet-turing-tuning.php:195
+#: src/includes/class-viglet-turing-tuning.php:196
 msgid "Name a search and at least one post."
 msgstr "Informe uma busca e pelo menos um post."
 
@@ -1732,11 +1731,11 @@ msgstr "Conteúdo relacionado"
 msgid "The posts Viglet Turing finds most like the one being read. Add the Related content block anywhere, or have it follow the content of these post types:"
 msgstr "Os posts que o Viglet Turing acha mais parecidos com o que está sendo lido. Adicione o bloco Conteúdo relacionado em qualquer lugar, ou faça-o seguir o conteúdo destes tipos de post:"
 
-#: src/blocks/related/render.php:36
+#: src/blocks/related/render.php:37
 msgid "Related posts appear here once this post is indexed and Viglet Turing finds posts like it."
 msgstr "Os posts relacionados aparecem aqui quando este post estiver indexado e o Viglet Turing encontrar posts parecidos."
 
-#: src/blocks/related/render.php:44
+#: src/blocks/related/render.php:45
 #: src/admin/js/related-block-editor.js:48
 msgid "Related posts"
 msgstr "Posts relacionados"
@@ -1830,23 +1829,23 @@ msgid_plural "%d results"
 msgstr[0] "%d resultado"
 msgstr[1] "%d resultados"
 
-#: src/admin/js/search-block-editor.js:78
+#: src/admin/js/search-block-editor.js:79
 msgid "Layout"
 msgstr "Disposição"
 
-#: src/admin/js/search-block-editor.js:85
+#: src/admin/js/search-block-editor.js:86
 msgid "Its parts are blocks: move them, or put other blocks between them."
 msgstr "As partes dele são blocos: mova-as, ou coloque outros blocos entre elas."
 
-#: src/admin/js/search-block-editor.js:89
+#: src/admin/js/search-block-editor.js:90
 msgid "Make its parts (box, filters, results, pages) blocks you can reorder."
 msgstr "Transforme as partes dele (caixa, filtros, resultados, páginas) em blocos que você pode reordenar."
 
-#: src/admin/js/search-block-editor.js:103
+#: src/admin/js/search-block-editor.js:104
 msgid "Back to the default order"
 msgstr "Voltar à ordem padrão"
 
-#: src/admin/js/search-block-editor.js:107
+#: src/admin/js/search-block-editor.js:108
 msgid "Arrange its parts"
 msgstr "Organizar as partes"
 
@@ -1979,11 +1978,11 @@ msgstr "Aplicar este filtro"
 msgid "Published"
 msgstr "Publicado"
 
-#: src/admin/js/search-block-editor.js:173
+#: src/admin/js/search-block-editor.js:186
 msgid "Suggest the filters a sentence names"
 msgstr "Sugerir os filtros que uma frase cita"
 
-#: src/admin/js/search-block-editor.js:177
+#: src/admin/js/search-block-editor.js:190
 msgid "“Posts about php from last year” offers Type and Published filters to apply with one click. Each sentence is an LLM call; nothing is applied without a click."
 msgstr "“Posts sobre php do ano passado” oferece filtros de Tipo e Publicado para aplicar com um clique. Cada frase é uma chamada ao LLM; nada é aplicado sem um clique."
 
@@ -2360,14 +2359,14 @@ msgid "Where they differ"
 msgstr "Onde diferem"
 
 #: src/blocks/copilot/render.php:184
-#: src/blocks/related/render.php:149
+#: src/blocks/related/render.php:151
 #: src/blocks/search/parts/main.php:96
 msgid "Compare"
 msgstr "Comparar"
 
 #. translators: %d: how many products, two to four.
 #: src/blocks/copilot/render.php:109
-#: src/blocks/related/render.php:55
+#: src/blocks/related/render.php:56
 #: src/blocks/search/render.php:113
 #, php-format
 msgid "Compare %d products"
@@ -2375,7 +2374,7 @@ msgstr "Comparar %d produtos"
 
 #. translators: %s: a product's name.
 #: src/blocks/copilot/render.php:107
-#: src/blocks/related/render.php:148
+#: src/blocks/related/render.php:150
 #: src/blocks/search/render.php:115
 #, php-format
 msgid "Compare %s"
@@ -2443,11 +2442,11 @@ msgstr "Buscas populares"
 msgid "Popular:"
 msgstr "Populares:"
 
-#: src/admin/js/search-block-editor.js:200
+#: src/admin/js/search-block-editor.js:213
 msgid "Show popular searches under the box"
 msgstr "Mostrar as buscas populares sob a caixa"
 
-#: src/admin/js/search-block-editor.js:204
+#: src/admin/js/search-block-editor.js:217
 msgid "Up to eight of this week’s most searched words, each one checked to find something, before a visitor types."
 msgstr "Até oito das palavras mais buscadas da semana, cada uma conferida para encontrar algo, antes que o visitante digite."
 
@@ -2725,11 +2724,11 @@ msgstr "Desfazer"
 msgid "Understood: %s"
 msgstr "Entendido: %s"
 
-#: src/admin/js/search-block-editor.js:187
+#: src/admin/js/search-block-editor.js:200
 msgid "Apply them instead of suggesting"
 msgstr "Aplicá-los em vez de sugerir"
 
-#: src/admin/js/search-block-editor.js:191
+#: src/admin/js/search-block-editor.js:204
 msgid "“Rain jacket under $400, blue” filters by colour and price at once, and a line says what was understood, with Undo. A price is read even without a language model."
 msgstr "“Jaqueta de chuva até R$ 400, azul” filtra por cor e preço de uma vez, e uma linha diz o que foi entendido, com Desfazer. Um preço é lido mesmo sem um modelo de linguagem."
 
@@ -2872,21 +2871,21 @@ msgstr "Imagem nos cards"
 msgid "Featured image"
 msgstr "Imagem destacada"
 
-#: src/admin/js/search-block-editor.js:121
+#: src/admin/js/search-block-editor.js:134
 msgid "Always filter by"
 msgstr "Sempre filtrar por"
 
-#: src/admin/js/search-block-editor.js:137
+#: src/admin/js/search-block-editor.js:150
 msgid "Each as field:value (type:event, or a mapped facet). Every search this block makes stays inside them, and visitors cannot remove them."
 msgstr "Cada um como campo:valor (type:event, ou uma faceta mapeada). Toda busca deste bloco fica dentro deles, e os visitantes não podem removê-los."
 
 #. translators: %s: what the search is limited to, e.g. "Events".
-#: src/blocks/search/parts/box.php:80
+#: src/blocks/search/parts/box.php:81
 #, php-format
 msgid "In %s"
 msgstr "Em %s"
 
-#: src/blocks/search/parts/box.php:83
+#: src/blocks/search/parts/box.php:84
 msgid "Search the whole site"
 msgstr "Buscar no site todo"
 
@@ -3563,3 +3562,13 @@ msgstr "Um botão que abre um chat que responde a partir do conteúdo deste site
 msgctxt "block description"
 msgid "A button that opens a conversation with Viglet Turing's chat: visitors ask in their own words and get an answer generated from this site's content, with the sources it used."
 msgstr "Um botão que abre uma conversa com o chat do Viglet Turing: os visitantes perguntam com suas próprias palavras e recebem uma resposta gerada a partir do conteúdo deste site, com as fontes que ela usou."
+
+#: src/includes/class-viglet-turing-search-block.php:239
+#: src/admin/js/search-block-editor.js:123
+msgctxt "submit button"
+msgid "Search"
+msgstr "Buscar"
+
+#: src/admin/js/search-block-editor.js:122
+msgid "Button text"
+msgstr "Texto do botão"

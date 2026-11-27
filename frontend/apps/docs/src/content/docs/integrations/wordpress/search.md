@@ -67,6 +67,9 @@ suggestions, "did you mean", the mapped facets, results and pages. It is built w
 Interactivity API on Viglet Turing's JS SDK and takes its colours and type from the theme. It
 reads `?q=` (or `?s=`), so a page holding it can serve as the site's search page.
 
+**Placeholder** sets the box's hint, and **Button text** the words on its button. The button
+says "Search" by default, as a verb, so it reads "Buscar" in Portuguese.
+
 **Always filter by** scopes a block to one section of the site: a box on the events page
 set to `type:event` searches only events, and one set to a mapped facet's value
 (`publisher:sociology`) only what carries it. Each filter is `field:value`. Every search

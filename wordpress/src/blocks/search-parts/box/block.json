@@ -12,6 +12,7 @@
 	],
 	"usesContext": [
 		"viglet-turing/search/placeholder",
+		"viglet-turing/search/buttonText",
 		"viglet-turing/search/showFacets",
 		"viglet-turing/search/showSort",
 		"viglet-turing/search/showAnswer",

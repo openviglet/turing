@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-27T20:48:54+00:00\n"
+"POT-Creation-Date: 2026-11-27T21:25:39+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-turing-search\n"
@@ -33,14 +33,13 @@ msgid "Indexing"
 msgstr ""
 
 #: src/admin/views/settings-page.php:48
-#: src/blocks/search/parts/box.php:22
-#: src/blocks/search/parts/box.php:48
+#: src/blocks/search/parts/box.php:23
 #: src/includes/class-viglet-turing-native-search.php:344
 #: src/includes/class-viglet-turing-post-state.php:110
 #: assets/admin/insights.js:165
 #: assets/admin/tuning.js:399
 #: src/admin/js/editor-panel.js:324
-#: src/admin/js/search-block-editor.js:112
+#: src/admin/js/search-block-editor.js:113
 msgid "Search"
 msgstr ""
 
@@ -715,7 +714,7 @@ msgstr ""
 
 #. translators: %s: a product's name.
 #: src/blocks/copilot/render.php:107
-#: src/blocks/related/render.php:148
+#: src/blocks/related/render.php:150
 #: src/blocks/search/render.php:115
 #, php-format
 msgid "Compare %s"
@@ -723,7 +722,7 @@ msgstr ""
 
 #. translators: %d: how many products, two to four.
 #: src/blocks/copilot/render.php:109
-#: src/blocks/related/render.php:55
+#: src/blocks/related/render.php:56
 #: src/blocks/search/render.php:113
 #, php-format
 msgid "Compare %d products"
@@ -789,7 +788,7 @@ msgid "Add to cart"
 msgstr ""
 
 #: src/blocks/copilot/render.php:184
-#: src/blocks/related/render.php:149
+#: src/blocks/related/render.php:151
 #: src/blocks/search/parts/main.php:96
 msgid "Compare"
 msgstr ""
@@ -798,11 +797,11 @@ msgstr ""
 msgid "Guides for this plan"
 msgstr ""
 
-#: src/blocks/related/render.php:36
+#: src/blocks/related/render.php:37
 msgid "Related posts appear here once this post is indexed and Viglet Turing finds posts like it."
 msgstr ""
 
-#: src/blocks/related/render.php:44
+#: src/blocks/related/render.php:45
 #: src/admin/js/related-block-editor.js:48
 msgid "Related posts"
 msgstr ""
@@ -836,25 +835,25 @@ msgstr ""
 msgid "Search…"
 msgstr ""
 
-#: src/blocks/search/parts/box.php:45
+#: src/blocks/search/parts/box.php:46
 msgid "Clear the search"
 msgstr ""
 
-#: src/blocks/search/parts/box.php:54
+#: src/blocks/search/parts/box.php:55
 msgid "Suggestions"
 msgstr ""
 
-#: src/blocks/search/parts/box.php:67
+#: src/blocks/search/parts/box.php:68
 msgid "Clear recent searches"
 msgstr ""
 
 #. translators: %s: what the search is limited to, e.g. "Events".
-#: src/blocks/search/parts/box.php:80
+#: src/blocks/search/parts/box.php:81
 #, php-format
 msgid "In %s"
 msgstr ""
 
-#: src/blocks/search/parts/box.php:83
+#: src/blocks/search/parts/box.php:84
 msgid "Search the whole site"
 msgstr ""
 
@@ -1601,14 +1600,14 @@ msgid "Viglet Turing answered an AI call again: the AI budget is no longer exhau
 msgstr ""
 
 #. translators: %d: how many documents were indexed.
-#: src/includes/class-viglet-turing-indexer.php:291
+#: src/includes/class-viglet-turing-indexer.php:325
 #: assets/admin/setup.js:133
 #, php-format,js-format
 msgid "Indexing complete. %d documents indexed."
 msgstr ""
 
 #. translators: 1: documents indexed so far, 2: documents to index in all.
-#: src/includes/class-viglet-turing-indexer.php:293
+#: src/includes/class-viglet-turing-indexer.php:327
 #, php-format
 msgid "Indexed %1$d of %2$d documents..."
 msgstr ""
@@ -1901,6 +1900,12 @@ msgstr ""
 msgid "Oldest"
 msgstr ""
 
+#: src/includes/class-viglet-turing-search-block.php:239
+#: src/admin/js/search-block-editor.js:123
+msgctxt "submit button"
+msgid "Search"
+msgstr ""
+
 #. translators: %s: the SN site's name.
 #: src/includes/class-viglet-turing-tuning.php:68
 #, php-format
@@ -1911,7 +1916,7 @@ msgstr ""
 msgid "A synonym needs two words or more."
 msgstr ""
 
-#: src/includes/class-viglet-turing-tuning.php:195
+#: src/includes/class-viglet-turing-tuning.php:196
 msgid "Name a search and at least one post."
 msgstr ""
 
@@ -3016,7 +3021,7 @@ msgid "Shows the products a shopper ticked Compare on in the search results, sid
 msgstr ""
 
 #: src/admin/js/copilot-block-editor.js:53
-#: src/admin/js/search-block-editor.js:114
+#: src/admin/js/search-block-editor.js:115
 msgid "Placeholder"
 msgstr ""
 
@@ -3256,22 +3261,22 @@ msgid "Show as"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:114
-#: src/admin/js/search-block-editor.js:247
+#: src/admin/js/search-block-editor.js:260
 msgid "A grid"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:118
-#: src/admin/js/search-block-editor.js:243
+#: src/admin/js/search-block-editor.js:256
 msgid "A list"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:127
-#: src/admin/js/search-block-editor.js:257
+#: src/admin/js/search-block-editor.js:270
 msgid "Show the image"
 msgstr ""
 
 #: src/admin/js/related-block-editor.js:131
-#: src/admin/js/search-block-editor.js:265
+#: src/admin/js/search-block-editor.js:278
 msgid "Show the date"
 msgstr ""
 
@@ -3279,107 +3284,111 @@ msgstr ""
 msgid "Show the excerpt"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:78
+#: src/admin/js/search-block-editor.js:79
 msgid "Layout"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:85
+#: src/admin/js/search-block-editor.js:86
 msgid "Its parts are blocks: move them, or put other blocks between them."
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:89
+#: src/admin/js/search-block-editor.js:90
 msgid "Make its parts (box, filters, results, pages) blocks you can reorder."
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:103
+#: src/admin/js/search-block-editor.js:104
 msgid "Back to the default order"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:107
+#: src/admin/js/search-block-editor.js:108
 msgid "Arrange its parts"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:121
+#: src/admin/js/search-block-editor.js:122
+msgid "Button text"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:134
 msgid "Always filter by"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:137
+#: src/admin/js/search-block-editor.js:150
 msgid "Each as field:value (type:event, or a mapped facet). Every search this block makes stays inside them, and visitors cannot remove them."
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:143
+#: src/admin/js/search-block-editor.js:156
 msgid "Show filters (facets)"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:152
+#: src/admin/js/search-block-editor.js:165
 msgid "Let visitors sort (relevance, newest, oldest)"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:160
+#: src/admin/js/search-block-editor.js:173
 msgid "Answer questions from this site’s content"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:164
+#: src/admin/js/search-block-editor.js:177
 msgid "A search that reads as a question gets Viglet Turing’s answer, with its sources, above the results. Each one is an LLM call; it shows only when Viglet Turing cites sources."
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:173
+#: src/admin/js/search-block-editor.js:186
 msgid "Suggest the filters a sentence names"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:177
+#: src/admin/js/search-block-editor.js:190
 msgid "“Posts about php from last year” offers Type and Published filters to apply with one click. Each sentence is an LLM call; nothing is applied without a click."
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:187
+#: src/admin/js/search-block-editor.js:200
 msgid "Apply them instead of suggesting"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:191
+#: src/admin/js/search-block-editor.js:204
 msgid "“Rain jacket under $400, blue” filters by colour and price at once, and a line says what was understood, with Undo. A price is read even without a language model."
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:200
+#: src/admin/js/search-block-editor.js:213
 msgid "Show popular searches under the box"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:204
+#: src/admin/js/search-block-editor.js:217
 msgid "Up to eight of this week’s most searched words, each one checked to find something, before a visitor types."
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:213
+#: src/admin/js/search-block-editor.js:226
 msgid "Where the filters sit"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:220
+#: src/admin/js/search-block-editor.js:233
 msgid "Left"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:224
+#: src/admin/js/search-block-editor.js:237
 msgid "Right"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:228
+#: src/admin/js/search-block-editor.js:241
 msgid "Above the results"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:239
+#: src/admin/js/search-block-editor.js:252
 msgid "Results as"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:261
+#: src/admin/js/search-block-editor.js:274
 msgid "Show the type"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:269
+#: src/admin/js/search-block-editor.js:282
 msgid "Show the snippet"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:281
+#: src/admin/js/search-block-editor.js:294
 msgid "Results per page"
 msgstr ""
 
-#: src/admin/js/search-block-editor.js:305
+#: src/admin/js/search-block-editor.js:318
 msgid "Viglet Turing search"
 msgstr ""
 

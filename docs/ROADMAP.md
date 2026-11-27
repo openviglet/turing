@@ -33,7 +33,6 @@
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
-- 📋 **T1374** (deps: —) **The search button says Busca in pt_BR, a noun, and the block has no attribute to set its text** — A button reads as an action, and the one translation shared with the column and panel makes it read as a heading. → §CLXXXII.31
 - 📋 **T1375** (deps: —) **The search block has no AI mode: asking the site opens a modal, never turns the results page into a chat** — A conversation with sources beside the answer, follow-ups and its own URL is how modern search answers, and a modal cannot hold it. → §CLXXXII.32
 - 📋 **T1387** (deps: —) **A search box that sends its query to the search page has no form action or scope field, so it fails without JavaScript** — A scoped section box falls back to its own page with no results and drops the scope when the script is off or still loading. → §CLXXXII.33
 - 📋 **T1388** (deps: —) **A search the site starts itself, like a 404's, cannot say where it came from, so Insights mixes it with typed ones** — A 404 searching the broken URL is the list of missing redirects, and without an origin it cannot be read apart. → §CLXXXII.34
