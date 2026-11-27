@@ -21,6 +21,8 @@
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
+- 📋 **T1365** (deps: —) **The search card's crumb is the URL path in slugs, so a result reads eventos > desigualdade-sa-e-o-poder-politico** — A trail of slugs repeats the title in a form nobody reads and names pages by words the site never shows. → §CLXXXII.25
+- 📋 **T1366** (deps: —) **A short facet's hidden show-more button reads Mostrar mais -4, a negative count of what is left** — The label is wrong in the server render, and any theme, reader or no-JS view that shows it shows a negative number. → §CLXXXII.26
 
 ## Done when — T1184
 

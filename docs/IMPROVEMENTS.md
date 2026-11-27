@@ -2389,6 +2389,47 @@ subfolder through BUILD_DIR, and the SVN credentials live in repository secrets.
 first submission is manual and outside this task. The Dumont prefix rename (T1253) lands
 first, so the directory never sees the old option keys.
 
+### CLXXXII.25 A crumb of titles, not slugs (T1365)
+
+**Where it happened.** fespsp-base FB93 (the search design), rendering
+`viglet-turing/search` on the fespsp-institucional search lab (image b64a3b0, plugin
+from `turing/latest/wordpress/src`), query "palestra".
+
+**What came back.** Every result's `.viglet-turing-search__crumb` is the URL path, slug
+by slug: "eventos › desigualdade-sa-e-o-poder-politico", "eventos ›
+palestra-celso-furtado-e-o-desenvolvimento", "eventos". The last segment repeats the
+title in slug form, and the others are slugs a visitor never sees on the site ("eventos"
+for the page titled "Eventos", "trabalhe-conosco" for "Trabalhe conosco").
+
+**What it should do.** The crumb is the trail a visitor would read: the titles of the
+ancestors (the parent pages of a page; the archive or listing page of a custom type,
+e.g. "Eventos" for an `evento`, which a mapping or the type's `has_archive`/page setting
+can name), without the document's own title, which is right below. Sent at index time as
+a field, so the card does not parse URLs. A post with no ancestors shows no crumb.
+
+**Workaround.** None. The base design (docs/busca/README.md in fespsp-base) styles the
+crumb as it is and names this line.
+
+### CLXXXII.26 Show more only when there is more (T1366)
+
+**Where it happened.** fespsp-base FB93, the `viglet-turing/search` block on the
+fespsp-institucional search lab (image b64a3b0), query "palestra", facets "Tipo de
+evento" (1 value), "Local" (1 value) and "Quando" (3 values).
+
+**What came back.** The server-rendered markup of each facet's "show more" button reads
+`Mostrar mais -4`, `Mostrar mais -4` and `Mostrar mais -2` (`<button
+class="viglet-turing-search__link" hidden data-wp-text="state.moreLabel">`). The button
+is hidden, so a sighted visitor does not see it, but the label is computed as the
+facet's limit minus its item count, which goes negative when a facet has fewer items
+than the limit; a screen reader that reads hidden-by-CSS content, a theme that shows the
+link, or a no-JS render shows a negative number.
+
+**What it should do.** The label counts what is left to show (never below zero), and the
+button is not rendered at all when there is nothing more, in the server render as in the
+client. A test with a facet shorter than its limit expects no "more" button.
+
+**Workaround.** None.
+
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report
