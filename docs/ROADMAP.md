@@ -33,7 +33,7 @@
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
-- 📋 **T1369** (deps: —) **The assistant's AI label says the answers come from this site's posts, and no setting lets a site word it** — On a site whose answers cite pages, events and books, a label naming posts is inaccurate in the one place that must be honest. → §CLXXXII.29
+- 📋 **T1369** (deps: —) **The assistant says its answers come from this site's posts, in its label and help, and no setting lets a site word it** — On a site whose answers cite pages, events and books, a label naming posts is inaccurate in the one place that must be honest. → §CLXXXII.29
 - 📋 **T1372** (deps: —) **A spotlight refuses a post whose indexed URL points off the site, so a shortcut to an outside page cannot be pinned** — Pinning is how a site puts its most wanted destination first, and those are often outside it. → §CLXXXII.30
 - 📋 **T1374** (deps: —) **The search button says Busca in pt_BR, a noun, and the block has no attribute to set its text** — A button reads as an action, and the one translation shared with the column and panel makes it read as a heading. → §CLXXXII.31
 - 📋 **T1375** (deps: —) **The search block has no AI mode: asking the site opens a modal, never turns the results page into a chat** — A conversation with sources beside the answer, follow-ups and its own URL is how modern search answers, and a modal cannot hold it. → §CLXXXII.32
