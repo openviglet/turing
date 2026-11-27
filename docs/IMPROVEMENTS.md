@@ -35,6 +35,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
+## Block CZ — Backend modules with verified boundaries
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2418,6 +2420,34 @@ build that fails on a boundary violation. Compatibility is waived for packages, 
 mappings, table names and the Liquibase history, so the schema is reset to one baseline
 per module; REST paths, the SDK contract and the exchange format stay. Later work on
 module boundaries files here.
+
+### CLXXXIX.48 The image boots on its own heap (T1358)
+
+**Where it happened.** fespsp-institucional, the search lab
+(`docker/turing/docker-compose.yml`), on 2026-11-27, moving from
+`ghcr.io/openviglet/turing:2026.3.8` to the `latest` build of d5ce6ee
+(`sha256:1081759500f8adf01afe493c13b791d24897359b17b5bb95f5969abaa284e87f`,
+`TURING_BUILD_COMMIT=d5ce6ee`). Embedded engine (H2, Lucene, Artemis), fresh
+`/app/store` volume, no `JAVA_OPTS` set by the compose. Docker has 32 GB and 28 CPUs.
+
+**What came back.** Every boot dies before Tomcat starts: `BeanCreationException: Error
+creating bean with name 'applicationModuleIdentifiers'
+(SpringModulithRuntimeAutoConfiguration) ... java.lang.OutOfMemoryError: Java heap
+space`, and `restart: unless-stopped` loops it. The image sets `JAVA_OPTS=-Xmx512m
+-Xms512m` in its `ENV`, and the Spring Modulith runtime module scan that Block CZ
+brought in does not fit in 512 MB. The same image with `JAVA_OPTS=-Xmx1g -Xms512m
+-Djava.awt.headless=true` starts in 60 s. Turing's own WordPress demo compose
+(`wordpress/docker-compose.yml`) sets no `JAVA_OPTS` either, so it should hit the same
+wall.
+
+**What it should do.** The published image boots on its own defaults with the embedded
+engine, on a fresh store and on an existing one: raise the baked heap or move to
+`-XX:MaxRAMPercentage` so it follows the container's limit, and/or keep the Modulith
+runtime scan out of the startup path (precomputed module identifiers). An image smoke
+test in CI boots it with no `JAVA_OPTS` and waits for `Started TuringES`.
+
+**Workaround.** The lab sets `JAVA_OPTS` to `-Xmx1g` on the `turing` service, with this
+id beside it, until a release fixes the default.
 
 ## CXC One bad document never costs the rest of an import
 

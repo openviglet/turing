@@ -22,6 +22,10 @@
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
 
+## Block CZ — Backend modules with verified boundaries
+
+- 📋 **T1358** (deps: —) **The published image runs out of heap at startup on its own JAVA_OPTS, so a fresh embedded Turing never boots** — Anyone pulling the image with the documented compose gets a restart loop and has to read the stack trace to find the heap. → §CLXXXIX.48
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console
