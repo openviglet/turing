@@ -58,6 +58,13 @@ class Viglet_Turing_Related {
 	private array $settings;
 
 	/**
+	 * This site's related posts' indexed addresses, by post id, as Turing returned them (T1372).
+	 *
+	 * @var array<int, string>
+	 */
+	private array $urls = array();
+
+	/**
 	 * Build over the given settings, or over the stored ones.
 	 *
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
@@ -186,7 +193,8 @@ class Viglet_Turing_Related {
 			return array();
 		}
 
-		$all_sites = $all_sites && array() !== ( new Viglet_Turing_Indexer( $this->settings ) )->sibling_sites();
+		$indexer   = new Viglet_Turing_Indexer( $this->settings );
+		$all_sites = $all_sites && array() !== $indexer->sibling_sites();
 		$rows      = min( self::MAX_ROWS, $count * self::ROWS_PER_SHOWN );
 		$items     = array();
 		foreach ( $this->neighbours( $post_id, $mode, $rows, $all_sites ) as $neighbour ) {
@@ -196,12 +204,14 @@ class Viglet_Turing_Related {
 				}
 			} else {
 				$candidate = get_post( $neighbour );
+				// The rule a spotlight follows (T1372): a post in search, not behind a password,
+				// linked where its indexed document points.
 				if (
 					$candidate instanceof WP_Post
 					&& $candidate->ID !== $post_id
-					&& 'publish' === $candidate->post_status
-					&& '' === $candidate->post_password
 					&& ( ! $same_type || $candidate->post_type === $post->post_type )
+					&& $indexer->promotable( $candidate )
+					&& '' !== $this->url( $candidate )
 				) {
 					$items[] = $candidate;
 				}
@@ -212,6 +222,19 @@ class Viglet_Turing_Related {
 		}//end foreach
 
 		return $items;
+	}
+
+	/**
+	 * Where a related post links (T1372): the address its indexed document holds, as Turing
+	 * returned it, so a shortcut to a page elsewhere opens there; the permalink for a post
+	 * Turing gave no address for. Empty when that address is not http(s).
+	 *
+	 * @param WP_Post $post A post related() returned.
+	 */
+	public function url( WP_Post $post ): string {
+		return array_key_exists( $post->ID, $this->urls )
+			? Viglet_Turing_Indexer::web_url( $this->urls[ $post->ID ] )
+			: (string) get_permalink( $post );
 	}
 
 	/**
@@ -232,10 +255,13 @@ class Viglet_Turing_Related {
 	private function neighbours( int $post_id, string $mode, int $rows, bool $all_sites = false ): array {
 		$indexer = new Viglet_Turing_Indexer( $this->settings );
 		$scope   = $all_sites ? implode( ',', $indexer->scope_keys() ) : '';
-		$key     = 'viglet_turing_related_' . md5( $post_id . '|' . $mode . '|' . $rows . '|' . $this->settings['site_name'] . '|' . $this->settings['locale'] . '|' . $scope );
-		$cached  = get_transient( $key );
-		if ( is_array( $cached ) ) {
-			return $cached;
+		// T1372: the entry holds the posts' indexed addresses too, under a key of its own so an
+		// entry cached before them is never read as one that has them.
+		$key    = 'viglet_turing_related_urls_' . md5( $post_id . '|' . $mode . '|' . $rows . '|' . $this->settings['site_name'] . '|' . $this->settings['locale'] . '|' . $scope );
+		$cached = get_transient( $key );
+		if ( is_array( $cached ) && isset( $cached['items'], $cached['urls'] ) ) {
+			$this->urls = (array) $cached['urls'] + $this->urls;
+			return (array) $cached['items'];
 		}
 
 		// A page read (D328): a hung Turing costs this view a few seconds, the next ones nothing.
@@ -254,11 +280,15 @@ class Viglet_Turing_Related {
 
 		$prefix = $indexer->site_key() . ':post:';
 		$found  = array();
+		$urls   = array();
 		foreach ( $similar as $document ) {
 			$doc_id = (string) $document['id'];
 			$rest   = substr( $doc_id, strlen( $prefix ) );
 			if ( str_starts_with( $doc_id, $prefix ) && ctype_digit( $rest ) ) {
 				$found[] = (int) $rest;
+				if ( '' !== (string) $document['url'] ) {
+					$urls[ (int) $rest ] = (string) $document['url'];
+				}
 				continue;
 			}
 			$sibling = $all_sites ? $indexer->sibling_of( $doc_id ) : null;
@@ -271,8 +301,16 @@ class Viglet_Turing_Related {
 					'origin' => $sibling['label'],
 				);
 			}
-		}
-		set_transient( $key, $found, self::CACHE_TTL );
+		}//end foreach
+		set_transient(
+			$key,
+			array(
+				'items' => $found,
+				'urls'  => $urls,
+			),
+			self::CACHE_TTL
+		);
+		$this->urls = $urls + $this->urls;
 
 		return $found;
 	}

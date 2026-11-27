@@ -178,36 +178,36 @@ class Viglet_Turing_Tuning {
 	 */
 	public function add_spotlight( string $query, array $post_ids ) {
 		$query = trim( $query );
-		// A promoted result shows its title and excerpt to every visitor who searches, so
-		// only a post a visitor can open qualifies: published in a public post type and
-		// not behind a password. A draft, a private post or a protected one is left out.
-		$posts = array_slice(
-			array_filter(
-				array_map( 'get_post', array_map( 'intval', $post_ids ) ),
-				static fn ( $post ) => $post instanceof WP_Post
-					&& is_post_publicly_viewable( $post )
-					&& '' === $post->post_password
-			),
-			0,
-			3
-		);
-		if ( '' === $query || ! $posts ) {
+		// A promoted result shows its title and excerpt to every visitor who searches, so only
+		// a post in search qualifies (T1372): one the plugin indexes, not behind a password, and
+		// whose indexed document holds a web address, which is where the result links. A
+		// shortcut to a page elsewhere links there; a draft or a protected post is left out.
+		$indexer = new Viglet_Turing_Indexer( $this->settings );
+		$links   = array();
+		foreach ( array_map( 'get_post', array_map( 'intval', $post_ids ) ) as $post ) {
+			if ( count( $links ) < 3 && $post instanceof WP_Post && $indexer->promotable( $post ) ) {
+				$link = $indexer->indexed_url( $post );
+				if ( '' !== $link ) {
+					$links[] = array( $post, $link );
+				}
+			}
+		}
+		if ( '' === $query || ! $links ) {
 			return new WP_Error( 'viglet_turing_spotlight', __( 'Name a search and at least one post.', 'viglet-turing-search' ) );
 		}
 		$site = $this->site_id();
 		if ( is_wp_error( $site ) ) {
 			return $site;
 		}
-		$indexer   = new Viglet_Turing_Indexer( $this->settings );
 		$documents = array();
-		foreach ( array_values( $posts ) as $i => $post ) {
+		foreach ( $links as $i => list( $post, $link ) ) {
 			$documents[] = array(
 				'position'    => $i + 1,
 				'title'       => get_the_title( $post ),
 				'type'        => $post->post_type,
 				'referenceId' => $indexer->build_doc_id( $post->ID ),
 				'content'     => wp_strip_all_tags( get_the_excerpt( $post ) ),
-				'link'        => get_permalink( $post ),
+				'link'        => $link,
 			);
 		}
 		$saved = $this->client->call(

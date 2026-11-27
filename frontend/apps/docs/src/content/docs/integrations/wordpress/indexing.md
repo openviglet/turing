@@ -170,6 +170,12 @@ afterwards. `wp turing sweep` applies the same rule.
 For a rule no field can express, the `viglet_turing_should_index` filter (`$index`,
 `$post`) has the last word on whether a post is in search.
 
+A promoted result and the **Related content** block follow the same rule: any post in search
+that has no password qualifies, including one of a post type WordPress doesn't show on its own.
+Each links to the address its document holds. So a shortcut type whose `viglet_turing_document`
+filter sets `url` to a page on another site can be pinned for a search, and opens that page.
+A document whose address is not `http://` or `https://` is never pinned or listed.
+
 ## PDF files
 
 With **PDF files attached to them** on (Settings → Content), each PDF in the media library

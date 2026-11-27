@@ -38,9 +38,20 @@ final class RelatedTest extends PluginTestCase {
 				'post_password' => 'secret',
 			),
 			6 => array( 'post_type' => 'post' ),
+			// T1372: a shortcut, a type WordPress does not show but the site indexes.
+			7 => array( 'post_type' => 'atalho' ),
 		) as $id => $fields ) {
 			$this->posts[ $id ] = new WP_Post( array( 'ID' => $id ) + $fields );
 		}
+		Functions\stubs(
+			array(
+				'wp_is_post_revision'               => false,
+				'get_post_meta'                     => '',
+				'viglet_turing_get_indexable_types' => array( 'post', 'page', 'atalho' ),
+				// A hit Turing gave no address for links to its permalink.
+				'get_permalink'                     => static fn ( $post ) => 'https://site.example.org/?p=' . $post->ID,
+			)
+		);
 		Functions\when( 'get_post' )->alias( fn ( $id ) => $this->posts[ $id ] ?? null );
 		Functions\when( 'get_transient' )->alias( fn ( $key ) => $this->transients[ $key ] ?? false );
 		Functions\when( 'set_transient' )->alias(
@@ -128,6 +139,50 @@ final class RelatedTest extends PluginTestCase {
 		$this->assertSame( 'secret', $this->requests[1][1]['headers']['Key'] );
 	}
 
+	/**
+	 * T1372: a related post links where its indexed document points, as Turing returned it, so
+	 * a shortcut opens its outside page; one whose address is not a web address is left out.
+	 */
+	public function test_a_related_shortcut_links_where_its_document_points(): void {
+		$this->similar = array( 'site-a:post:7', 'site-a:post:1' );
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) {
+				$this->requests[] = array( $url, $args );
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => json_encode(
+						array(
+							array(
+								'id'  => 'site-a:post:7',
+								'url' => 'https://vestibular.example.org/',
+							),
+							array(
+								'id'  => 'site-a:post:1',
+								'url' => 'javascript:alert(1)',
+							),
+							array(
+								'id'  => 'site-a:post:6',
+								'url' => 'https://site.example.org/six/',
+							),
+						)
+					),
+				);
+			}
+		);
+		$related = $this->related();
+
+		$items = $related->posts( 2, 5 );
+
+		$this->assertSame( array( 7, 6 ), $this->ids( $items ) );
+		$this->assertSame( 'https://vestibular.example.org/', $related->url( $items[0] ) );
+		$this->assertSame( 'https://site.example.org/six/', $related->url( $items[1] ) );
+
+		// Read again from the cache, the addresses come with it.
+		$again = $this->related();
+		$this->assertSame( 'https://vestibular.example.org/', $again->url( $again->posts( 2, 5 )[0] ) );
+		$this->assertCount( 1, $this->requests );
+	}
+
 	public function test_same_type_and_count_are_kept(): void {
 		$this->similar = array( 'site-a:post:3', 'site-a:post:6', 'site-a:post:1' );
 
@@ -155,7 +210,7 @@ final class RelatedTest extends PluginTestCase {
 				$vector           = str_contains( $url, 'mode=VECTOR' );
 				return array(
 					'response' => array( 'code' => $vector ? 500 : 200 ),
-					'body'     => $vector ? '' : '[{"id":"site-a:post:6"}]',
+					'body'     => $vector ? '' : '[{"id":"site-a:post:6","url":"https://site.example.org/six/"}]',
 				);
 			}
 		);

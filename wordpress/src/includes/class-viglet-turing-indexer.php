@@ -83,6 +83,40 @@ class Viglet_Turing_Indexer {
 	}
 
 	/**
+	 * Whether a post may be promoted or linked to every visitor (T1372): one the plugin indexes,
+	 * and not behind a password. Not `is_post_publicly_viewable()`: a non-public type (a
+	 * shortcut to a page elsewhere) is in search, so it may be pinned or listed as related too.
+	 *
+	 * @param WP_Post $post The candidate post.
+	 */
+	public function promotable( WP_Post $post ): bool {
+		return '' === $post->post_password && $this->should_index( $post );
+	}
+
+	/**
+	 * The address a post's indexed document holds (T1372): the permalink, or whatever the
+	 * `viglet_turing_document` filter put there, such as a shortcut's outside destination.
+	 * Empty when it is not an http(s) address, so nothing links to it.
+	 *
+	 * @param WP_Post $post The post.
+	 */
+	public function indexed_url( WP_Post $post ): string {
+		return self::web_url( (string) ( $this->build_attributes( $post )['url'] ?? '' ) );
+	}
+
+	/**
+	 * `$url` when it is an http(s) address, else empty (T1372).
+	 *
+	 * @param string $url A document's address.
+	 */
+	public static function web_url( string $url ): string {
+		$parts  = wp_parse_url( $url );
+		$scheme = is_array( $parts ) ? strtolower( (string) ( $parts['scheme'] ?? '' ) ) : '';
+
+		return in_array( $scheme, array( 'http', 'https' ), true ) ? $url : '';
+	}
+
+	/**
 	 * Whether a post is in search by the settings, the mapping and its own date (D308).
 	 *
 	 * @param WP_Post $post The candidate post.

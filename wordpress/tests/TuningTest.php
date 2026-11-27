@@ -90,49 +90,94 @@ final class TuningTest extends PluginTestCase {
 	}
 
 	/**
-	 * The posts a spotlight may name: 1 public, 2 a draft, 3 behind a password.
+	 * The posts a spotlight may name: 1 public, 2 a draft, 3 behind a password, 4 a shortcut
+	 * (a non-public type the site indexes) whose document points outside the site (T1372),
+	 * 5 a shortcut whose document holds no web address.
 	 */
 	private function spotlight_posts(): void {
 		$posts = array(
-			1 => new \WP_Post(
-				array(
-					'ID'         => 1,
-					'post_title' => 'Public',
-				)
+			1 => array( 'post_title' => 'Public' ),
+			2 => array(
+				'post_title'  => 'Draft',
+				'post_status' => 'draft',
 			),
-			2 => new \WP_Post(
-				array(
-					'ID'          => 2,
-					'post_title'  => 'Draft',
-					'post_status' => 'draft',
-				)
+			3 => array(
+				'post_title'    => 'Protected',
+				'post_password' => 'secret',
 			),
-			3 => new \WP_Post(
-				array(
-					'ID'            => 3,
-					'post_title'    => 'Protected',
-					'post_password' => 'secret',
-				)
+			4 => array(
+				'post_title' => 'Graduação',
+				'post_type'  => 'atalho',
+			),
+			5 => array(
+				'post_title' => 'Broken',
+				'post_type'  => 'atalho',
 			),
 		);
+		$posts = array_map( static fn ( $id, $fields ) => new \WP_Post( array( 'ID' => $id ) + $fields ), array_keys( $posts ), $posts );
+		$posts = array_combine( array_column( $posts, 'ID' ), $posts );
 		Functions\when( 'get_post' )->alias( static fn ( $id ) => $posts[ $id ] ?? null );
-		Functions\when( 'is_post_publicly_viewable' )->alias( static fn ( $post ) => 'publish' === $post->post_status );
+		// The shortcut type is in search though WordPress does not show it.
+		Functions\when( 'viglet_turing_get_indexable_types' )->justReturn( array( 'post', 'page', 'atalho' ) );
+		Functions\when( 'is_post_publicly_viewable' )->alias( static fn ( $post ) => 'post' === $post->post_type );
 		Functions\when( 'get_the_title' )->alias( static fn ( $post ) => $post->post_title );
 		Functions\when( 'get_the_excerpt' )->justReturn( 'An excerpt' );
 		Functions\when( 'wp_strip_all_tags' )->returnArg();
-		Functions\when( 'get_permalink' )->alias( static fn ( $post ) => 'https://example.com/?p=' . $post->ID );
+		Functions\when( 'get_permalink' )->alias( static fn ( $id ) => 'https://example.com/?p=' . ( $id instanceof \WP_Post ? $id->ID : $id ) );
+		Functions\stubs(
+			array(
+				'wp_is_post_revision'        => false,
+				'get_post_meta'              => '',
+				'strip_shortcodes'           => static fn ( $text ) => $text,
+				'wp_trim_words'              => static fn ( $text ) => $text,
+				'get_the_author_meta'        => 'Ana',
+				'get_post_time'              => '2026-10-01T09:00:00+00:00',
+				'get_post_modified_time'     => '2026-10-02T09:00:00+00:00',
+				'get_bloginfo'               => 'Institutional',
+				'get_the_post_thumbnail_url' => false,
+				'wp_get_post_categories'     => array(),
+				'wp_get_post_tags'           => array(),
+				'is_multisite'               => false,
+			)
+		);
+		// What the theme's filter does to a shortcut's document: its address is the destination.
+		\Brain\Monkey\Filters\expectApplied( 'viglet_turing_document' )->zeroOrMoreTimes()->andReturnUsing(
+			static function ( array $document, \WP_Post $post ): array {
+				$document['url'] = array(
+					4 => 'https://vestibular.example.org/',
+					5 => 'javascript:alert(1)',
+				)[ $post->ID ] ?? $document['url'];
+				return $document;
+			}
+		);
 	}
 
 	public function test_a_spotlight_promotes_only_posts_a_visitor_can_open(): void {
 		$this->spotlight_posts();
 
-		$result = ( new Viglet_Turing_Tuning( $this->settings() ) )->add_spotlight( 'workshop', array( 2, 3, 1 ) );
+		$result = ( new Viglet_Turing_Tuning( $this->settings() ) )->add_spotlight( 'workshop', array( 2, 3, 5, 1 ) );
 
 		$this->assertTrue( $result );
 		$this->assertSame( array( 'GET /api/sn', 'POST /api/sn/s1/spotlight' ), $this->calls() );
 		$documents = $this->body( 1 )['turSNSiteSpotlightDocuments'];
-		$this->assertSame( array( 'Public' ), array_column( $documents, 'title' ), 'a draft and a protected post never reach the search' );
+		$this->assertSame( array( 'Public' ), array_column( $documents, 'title' ), 'a draft, a protected post and one with no web address never reach the search' );
 		$this->assertSame( 1, $documents[0]['position'] );
+		$this->assertSame( 'https://example.com/?p=1', $documents[0]['link'] );
+	}
+
+	/**
+	 * T1372: a shortcut WordPress does not show but the site indexes is pinned, linked to the
+	 * destination its indexed document holds, not to its 404 permalink.
+	 */
+	public function test_a_spotlight_pins_a_shortcut_to_where_its_document_points(): void {
+		$this->spotlight_posts();
+
+		$result = ( new Viglet_Turing_Tuning( $this->settings() ) )->add_spotlight( 'graduação', array( 4 ) );
+
+		$this->assertTrue( $result );
+		$documents = $this->body( 1 )['turSNSiteSpotlightDocuments'];
+		$this->assertSame( array( 'Graduação' ), array_column( $documents, 'title' ) );
+		$this->assertSame( 'https://vestibular.example.org/', $documents[0]['link'] );
 	}
 
 	public function test_a_spotlight_of_no_public_post_sends_nothing(): void {

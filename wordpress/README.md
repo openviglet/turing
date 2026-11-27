@@ -111,7 +111,8 @@ would be two counts of one budget.
 
 The **Related content** block (`viglet-turing/related`) lists the posts Turing's
 similar-documents search finds most like the one being read. It never lists the post itself,
-only this site's published posts, and renders nothing when there are none. It is drawn on the
+only this site's posts in search (no password), each linked where its indexed document points,
+and renders nothing when there are none. It is drawn on the
 server, so the links are in the HTML, and each post's neighbours are cached for an hour.
 Settings → Search → Related Content puts it after the content of chosen post types. The
 block chooses how many to show, shared words or meaning (`MLT` / `VECTOR`; meaning falls back

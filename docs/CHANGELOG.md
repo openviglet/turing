@@ -1751,6 +1751,7 @@
 - **T1367** — Every result element (search block, instant search, related block, classic results page) carries data-type with the raw type key, so a theme styles each kind of result (design §CLXXXII.27 recorded in `frontend/apps/docs/src/content/docs/integrations/wordpress/reference.md`).
 - **T1368** — A theme gives the search block its starting query through viglet_turing_search_initial_query; the script keeps it and its results, leaves the address alone, and Back returns to it (design §CLXXXII.28 recorded in `frontend/apps/docs/src/content/docs/integrations/wordpress/reference.md`).
 - **T1369** — The Site assistant's note, help and setting say "this site's content" and its sources; a block AI notice and the viglet_turing_assistant_disclaimer filter word the note, empty keeps the default.
+- **T1372** — A spotlight and the related block take any indexed post with no password, a non-public shortcut type included, and link it where its indexed document points; non-http addresses are refused.
 
 ## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
 

@@ -2478,33 +2478,6 @@ subfolder through BUILD_DIR, and the SVN credentials live in repository secrets.
 first submission is manual and outside this task. The Dumont prefix rename (T1253) lands
 first, so the directory never sees the old option keys.
 
-### CLXXXII.30 Spotlight what the index holds (T1372)
-
-**Where it happened.** fespsp-institucional FI149, the search lab. The site has a
-non-public post type `atalho` (shortcut): no page of its own, a destination outside the
-site (`https://vestibular.fespsp.org.br/`), and the theme's `viglet_turing_document`
-filter sets the indexed document's `url` to that destination. Search finds the shortcut
-and links to the destination, as intended.
-
-**The call.** `Viglet_Turing_Tuning::add_spotlight( 'graduação', array( <atalho
-Graduação> ) )` returns `WP_Error` "Informe uma busca e pelo menos um post."
-`add_spotlight()` keeps only posts where `is_post_publicly_viewable()` is true (4e83d3b)
-and links each with `get_permalink()`, which for a shortcut is a 404
-(`?post_type=atalho&p=123`).
-
-**The same seam elsewhere.** The related-posts block keeps a published shortcut
-(`Viglet_Turing_Related::related()`) and links it with `get_permalink()`
-(`blocks/related/render.php`), so a related shortcut is a 404 too.
-
-**What it should do.** One rule for a local post the plugin promotes or links: it
-qualifies when the indexer would index it (`should_index()`) and has no password, not by
-`is_post_publicly_viewable()`; its link is the URL the indexed document holds after
-`viglet_turing_document`, not the permalink. The spotlight and related posts both use
-it. Tests: a shortcut with an outside URL is pinned and its related card links there; a
-draft, a protected post and a non-http URL are refused.
-
-**Workaround.** None. FI149 waits on this.
-
 ### CLXXXII.31 A search button that says Buscar (T1374)
 
 **Where it happened.** fespsp-institucional FI144, the `/busca/` page of the FESPSP

@@ -16,8 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $viglet_turing_post_id = (int) ( $block->context['postId'] ?? get_the_ID() );
 $viglet_turing_preview = Viglet_Turing_Native_Search::is_editor_preview();
+$viglet_turing_source  = new Viglet_Turing_Related();
 $viglet_turing_posts   = $viglet_turing_post_id > 0
-	? ( new Viglet_Turing_Related() )->related(
+	? $viglet_turing_source->related(
 		$viglet_turing_post_id,
 		max( 1, min( 12, (int) ( $attributes['count'] ?? 3 ) ) ),
 		! empty( $attributes['sameType'] ),
@@ -102,7 +103,8 @@ if ( $viglet_turing_shop ) {
 				<?php
 				continue;
 			endif;
-			$viglet_turing_url     = get_permalink( $viglet_turing_related );
+			// Where its indexed document points (T1372): a shortcut opens its outside page.
+			$viglet_turing_url     = $viglet_turing_source->url( $viglet_turing_related );
 			$viglet_turing_image   = ! empty( $attributes['showImage'] ) && has_post_thumbnail( $viglet_turing_related )
 				? get_the_post_thumbnail(
 					$viglet_turing_related,
