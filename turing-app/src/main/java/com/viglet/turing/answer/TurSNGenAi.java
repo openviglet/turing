@@ -418,14 +418,17 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
         // can send them back in the filters event, so a partitioned caller skips it.
         com.viglet.turing.sn.nl.TurSNNLFilters nlFilters = context.getPartition() != null ? null
                 : siteNlFilters(request, filters, searchQuery);
-        java.util.Map<String, List<String>> extracted = nlFilters == null ? null
-                : retrievalFilters(request.siteName(), locale, nlFilters);
+        DatedRetrieval dated = nlFilters == null ? null
+                : datedRetrieval(request.siteName(), locale, nlFilters);
+        java.util.Map<String, List<String>> extracted = dated == null ? null : dated.filters();
         // T1362 — a question confined to a period's documents tells the judge and the
         // answer what today and that period are, or "this week" reads as unanswerable.
         String period = extracted != null && extracted.containsKey(SOURCE_ID)
-                ? periodNote(nlFilters, siteToday(request.siteName())) : "";
+                ? periodNote(nlFilters, siteToday(request.siteName())) + cutNote(dated) : "";
+        // T1364 — the period's documents in date order, each with at least one chunk.
         Pinned found = pinDocument(context, searchQuery, request.documentId(),
-                retrieveDocuments(context, searchQuery, filters, extracted, locale));
+                inPeriodOrder(context, searchQuery, extracted,
+                        retrieveDocuments(context, searchQuery, filters, extracted, locale)));
         // T1363 — the judge, the answer, the caveat and the follow-ups read the
         // chunks' times in the site's wall clock, not the UTC they are indexed in.
         Pinned pinned = new Pinned(inSiteTime(context, found.documents()), found.pinnedCount());
@@ -643,47 +646,184 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
      */
     java.util.Map<String, List<String>> retrievalFilters(String siteName, Locale locale,
             com.viglet.turing.sn.nl.TurSNNLFilters nlFilters) {
+        return datedRetrieval(siteName, locale, nlFilters).filters();
+    }
+
+    /**
+     * T1364 — the retrieval filters of a dated question, and how many documents the
+     * period holds: more than {@link #DATED_HITS} means the list the answer reads was cut.
+     */
+    record DatedRetrieval(java.util.Map<String, List<String>> filters, long total) {
+
+        /** The ids of the period's documents in date order, upcoming first; empty with no period. */
+        List<String> ids() {
+            return filters.getOrDefault(SOURCE_ID, List.of());
+        }
+
+        boolean cut() {
+            return total > ids().size();
+        }
+    }
+
+    /**
+     * T1360 / T1364 — the value filters and, for a request with a range, the period's
+     * documents in date order, upcoming first and those already over after. The
+     * leftover words never narrow the period: "o que tem esta semana na FESPSP" asks
+     * for the week, and a page that never names the site is still in it.
+     */
+    DatedRetrieval datedRetrieval(String siteName, Locale locale,
+            com.viglet.turing.sn.nl.TurSNNLFilters nlFilters) {
         java.util.Map<String, List<String>> filters = retrievalFilters(nlFilters);
         if (dslSearchService == null || !StringUtils.hasText(siteName) || locale == null
                 || nlFilters.filters().stream().noneMatch(com.viglet.turing.sn.nl.TurSNNLFilters.Filter::isRange)) {
-            return filters;
+            return new DatedRetrieval(filters, 0);
         }
         try {
-            List<String> ids = datedIds(siteName, locale, nlFilters, true);
-            if (ids.isEmpty() && StringUtils.hasText(nlFilters.q())) {
-                ids = datedIds(siteName, locale, nlFilters, false);
-            }
+            com.viglet.turing.sn.nl.TurSNNLFilters scoped = new com.viglet.turing.sn.nl.TurSNNLFilters(true,
+                    nlFilters.text(), "", nlFilters.filters(), nlFilters.fq(), nlFilters.dropped());
+            com.viglet.turing.searchengine.dsl.TurDslQuery query =
+                    com.viglet.turing.sn.nl.TurSNNLFilterService.toQuery(scoped, null, null);
+            String startField = periodStartField(nlFilters);
+            String endField = periodEndField(nlFilters, startField);
+            java.util.Optional<com.viglet.turing.searchengine.dsl.TurDslSearchResponse.Hits> hits =
+                    dslSearchService.search(siteName, locale.toString(),
+                            com.viglet.turing.rag.catalog.planning.TurCopilotQueryBodies.of(query,
+                                    List.of(Map.of(startField, "asc")), DATED_HITS))
+                            .map(com.viglet.turing.searchengine.dsl.TurDslSearchResponse::hits);
+            List<String> ids = upcomingFirst(hits.map(com.viglet.turing.searchengine.dsl.TurDslSearchResponse.Hits::hits)
+                    .orElse(List.of()), endField, java.time.Instant.now());
             if (ids.isEmpty()) {
                 log.info("RAG chat: nothing on site '{}' falls in {}", siteName, nlFilters.fq());
-            } else {
-                filters.put(SOURCE_ID, ids);
+                return new DatedRetrieval(filters, 0);
             }
+            filters.put(SOURCE_ID, ids);
+            long total = hits.map(com.viglet.turing.searchengine.dsl.TurDslSearchResponse.Hits::total)
+                    .map(com.viglet.turing.searchengine.dsl.TurDslSearchResponse.Total::value)
+                    .orElse((long) ids.size());
+            return new DatedRetrieval(filters, Math.max(total, ids.size()));
         } catch (RuntimeException e) {
             log.warn("RAG chat dated search failed on site '{}' (value filters only): {}", siteName,
                     e.getMessage());
+            return new DatedRetrieval(filters, 0);
         }
-        return filters;
     }
 
-    /** The ids of the site's documents within the request's filters, with its words when {@code withWords}. */
-    private List<String> datedIds(String siteName, Locale locale, com.viglet.turing.sn.nl.TurSNNLFilters nlFilters,
-            boolean withWords) {
-        String q = withWords && StringUtils.hasText(nlFilters.q())
-                && !com.viglet.turing.searchengine.TurSNQueryRelaxer.onlyStopWords(nlFilters.q(), locale)
-                ? nlFilters.q() : "";
-        com.viglet.turing.sn.nl.TurSNNLFilters scoped = new com.viglet.turing.sn.nl.TurSNNLFilters(true,
-                nlFilters.text(), q, nlFilters.filters(), nlFilters.fq(), nlFilters.dropped());
-        com.viglet.turing.searchengine.dsl.TurDslQuery query =
-                com.viglet.turing.sn.nl.TurSNNLFilterService.toQuery(scoped, null, null);
-        return dslSearchService.search(siteName, locale.toString(),
-                com.viglet.turing.rag.catalog.planning.TurCopilotQueryBodies.of(query, null, DATED_HITS))
-                .map(com.viglet.turing.searchengine.dsl.TurDslSearchResponse::hits)
-                .map(com.viglet.turing.searchengine.dsl.TurDslSearchResponse.Hits::hits)
-                .orElse(List.of()).stream()
-                .map(com.viglet.turing.searchengine.dsl.TurDslSearchResponse.Hit::id)
-                .filter(StringUtils::hasText)
-                .distinct()
-                .toList();
+    /**
+     * The field the period's documents are sorted by: a range's own field with an upper
+     * bound (an overlap pair bounds the start field above), else the first range's.
+     */
+    static String periodStartField(com.viglet.turing.sn.nl.TurSNNLFilters nlFilters) {
+        List<com.viglet.turing.sn.nl.TurSNNLFilters.Filter> ranges = nlFilters.filters().stream()
+                .filter(com.viglet.turing.sn.nl.TurSNNLFilters.Filter::isRange).toList();
+        return ranges.stream().filter(f -> f.rangeEnd() != null).findFirst()
+                .orElse(ranges.get(0)).field();
+    }
+
+    /** The field that says when an item is over: an overlap pair's other field, else the start field. */
+    static String periodEndField(com.viglet.turing.sn.nl.TurSNNLFilters nlFilters, String startField) {
+        return nlFilters.filters().stream()
+                .filter(com.viglet.turing.sn.nl.TurSNNLFilters.Filter::isRange)
+                .filter(f -> f.rangeStart() != null && f.rangeEnd() == null && !f.field().equals(startField))
+                .map(com.viglet.turing.sn.nl.TurSNNLFilters.Filter::field)
+                .findFirst().orElse(startField);
+    }
+
+    /**
+     * T1364 — the hits' ids in their date order, the ones whose {@code endField} is
+     * before {@code now} moved after the rest. A hit with no readable date stays
+     * among the ones to come.
+     */
+    static List<String> upcomingFirst(List<com.viglet.turing.searchengine.dsl.TurDslSearchResponse.Hit> hits,
+            String endField, java.time.Instant now) {
+        List<String> upcoming = new ArrayList<>();
+        List<String> over = new ArrayList<>();
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (com.viglet.turing.searchengine.dsl.TurDslSearchResponse.Hit hit : hits) {
+            if (!StringUtils.hasText(hit.id()) || !seen.add(hit.id())) {
+                continue;
+            }
+            java.time.Instant ends = instant(hit.source() == null ? null : hit.source().get(endField));
+            (ends != null && ends.isBefore(now) ? over : upcoming).add(hit.id());
+        }
+        upcoming.addAll(over);
+        return upcoming;
+    }
+
+    /** A stored date as an instant: ISO text, a date alone (its end of day, UTC), or epoch millis. */
+    private static java.time.Instant instant(Object value) {
+        if (value instanceof Collection<?> collection) {
+            value = collection.stream().filter(java.util.Objects::nonNull).findFirst().orElse(null);
+        }
+        if (value instanceof Number number) {
+            return java.time.Instant.ofEpochMilli(number.longValue());
+        }
+        if (value instanceof java.util.Date date) {
+            return date.toInstant();
+        }
+        if (value == null) {
+            return null;
+        }
+        String text = value.toString().strip();
+        try {
+            return java.time.OffsetDateTime.parse(text).toInstant();
+        } catch (java.time.format.DateTimeParseException notInstant) {
+            try {
+                return java.time.LocalDate.parse(text.length() >= 10 ? text.substring(0, 10) : text)
+                        .plusDays(1).atStartOfDay(java.time.ZoneOffset.UTC).toInstant();
+            } catch (java.time.format.DateTimeParseException notDate) {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * T1364 — {@code documents} in the period's order, each of the period's documents
+     * with at least one chunk: one a global top-K by vector score left out is read
+     * from the store by its id. Not confined to a period, they come back as they are.
+     */
+    List<Document> inPeriodOrder(TurGenAiContext context, String query,
+            java.util.Map<String, List<String>> filters, List<Document> documents) {
+        List<String> ids = filters == null ? null : filters.get(SOURCE_ID);
+        if (ids == null || ids.isEmpty()) {
+            return documents;
+        }
+        java.util.Map<String, List<Document>> bySource = new java.util.LinkedHashMap<>();
+        documents.forEach(d -> bySource.computeIfAbsent(sourceOf(d), k -> new ArrayList<>()).add(d));
+        List<String> missing = ids.stream().filter(id -> !bySource.containsKey(id)).toList();
+        if (!missing.isEmpty()) {
+            java.util.Map<String, List<String>> byId = new java.util.LinkedHashMap<>(filters);
+            byId.put(SOURCE_ID, missing);
+            try {
+                List<Document> chunks = context.getVectorStore().similaritySearch(SearchRequest.builder()
+                        .query(query)
+                        .topK(missing.size() * PINNED_CHUNKS)
+                        .similarityThreshold(0.0)
+                        .filterExpression(TurRagFilters.buildFilterExpression(confined(context, byId)))
+                        .build());
+                if (chunks != null) {
+                    chunks.forEach(c -> bySource.putIfAbsent(sourceOf(c), List.of(c)));
+                }
+            } catch (RuntimeException e) {
+                log.warn("RAG chat could not read {} document(s) of the period: {}", missing.size(), e.getMessage());
+            }
+        }
+        List<Document> ordered = new ArrayList<>();
+        ids.forEach(id -> ordered.addAll(bySource.getOrDefault(id, List.of())));
+        bySource.forEach((source, chunks) -> {
+            if (!ids.contains(source)) {
+                ordered.addAll(chunks);
+            }
+        });
+        return ordered;
+    }
+
+    /** T1364 — what the answer is told when the period holds more documents than it reads. */
+    static String cutNote(DatedRetrieval dated) {
+        if (dated == null || !dated.cut()) {
+            return "";
+        }
+        return " The website content holds the first " + dated.ids().size() + " of the " + dated.total()
+                + " items in that period, in date order; say that the list is not complete.";
     }
 
     /**

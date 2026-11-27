@@ -1770,6 +1770,7 @@
 - **T1361** — nl-filters takes each filter's words out of q, also from the parse's free text, empties a stop-word-only q, and turns an end-field date range into the span's overlap pair (design §CXCII.3 recorded in `frontend/apps/docs/src/content/docs/rest-api.md`).
 - **T1362** — A dated question tells the STRICT_RAG judge and the answer prompt today and its resolved period, and an empty period-confined pass no longer widens to the whole site (design §CXCII.4 recorded in `frontend/apps/docs/src/content/docs/rest-api.md`).
 - **T1363** — A dated answer now announces each event at the site's own hour: chunk instants are rewritten to the site's time zone wherever chunk text enters a prompt, with no reindex.
+- **T1364** — A question about a period now reads every document dated in it, upcoming first and past ones after, each with a chunk; leftover words no longer narrow it, and a cut list is said.
 
 ## Block CZ — Backend modules with verified boundaries
 

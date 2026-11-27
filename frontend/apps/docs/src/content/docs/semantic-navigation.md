@@ -157,7 +157,10 @@ moment it is saved; terms stored before keep how they were stored.
 "this weekend" and the months in it, so "palestras amanhã" asked at 23:30 in São Paulo
 filters on the next day there, not on the day after in UTC. The assistant's answers read
 the dates of the site's content in it too, so an event indexed for 19:00 in São Paulo is
-announced at 19h, not at 22h UTC; a date with no time of day stays that day. Empty, filters
+announced at 19h, not at 22h UTC; a date with no time of day stays that day. A question
+about a period ("o que tem esta semana?") is answered from every document dated in it, in
+date order with the ones still to come first; past 30 documents, the answer says its list
+is not complete. Empty, filters
 use the server's time zone and answers keep the dates in UTC. A connector can set it from
 its manifest's `timeZone`.
 

@@ -99,16 +99,78 @@ class TurSNGenAiDatedRetrievalTest {
     }
 
     @Test
-    @DisplayName("Words that find nothing in the period are dropped, and the period is searched alone")
-    void wordsThatFindNothingAreDropped() {
+    @DisplayName("T1364: leftover words never narrow the period, which is searched once, by its start date")
+    void leftoverWordsNeverNarrowThePeriod() {
+        ArgumentCaptor<TurDslQueryRequest> body = ArgumentCaptor.forClass(TurDslQueryRequest.class);
+        when(dslSearchService.search(eq("fespsp"), eq("pt_BR"), body.capture()))
+                .thenReturn(Optional.of(hits("expo", "sarau")));
+
+        Map<String, List<String>> filters = genAi.retrievalFilters("fespsp", PT, thisWeek("FESPSP"));
+
+        assertThat(filters).containsExactly(Map.entry(TurSNGenAi.SOURCE_ID, List.of("expo", "sarau")));
+        verify(dslSearchService, times(1)).search(any(), any(), any());
+        assertThat(((TurDslQuery.Bool) body.getValue().query()).must()).isEmpty();
+        assertThat(body.getValue().sort()).containsExactly(Map.of("data_inicio", "asc"));
+    }
+
+    @Test
+    @DisplayName("T1364: events already over come after the ones to come, each keeping its date order")
+    void eventsAlreadyOverComeLast() {
+        java.time.Instant now = java.time.Instant.parse("2026-11-27T15:00:00Z");
+        List<TurDslSearchResponse.Hit> hits = List.of(
+                dated("mon", "2026-11-23T22:00:00Z"),
+                dated("wed", "2026-11-25T22:00:00Z"),
+                dated("fri", "2026-11-27T22:00:00Z"),
+                dated("expo", "2026-11-30"),
+                new TurDslSearchResponse.Hit("undated", 1.0, Map.of(), null),
+                dated("sun", "2026-11-29T18:00:00Z"));
+
+        assertThat(TurSNGenAi.upcomingFirst(hits, "data_fim", now))
+                .containsExactly("fri", "expo", "undated", "sun", "mon", "wed");
+        assertThat(TurSNGenAi.periodStartField(thisWeek(""))).isEqualTo("data_inicio");
+        assertThat(TurSNGenAi.periodEndField(thisWeek(""), "data_inicio")).isEqualTo("data_fim");
+    }
+
+    @Test
+    @DisplayName("T1364: six events in the week all reach the prompt in the period's order, one the vector pass missed included")
+    void everyEventOfThePeriodGetsAChunk() {
+        List<String> week = List.of("fri", "sat", "sun", "talk", "expo", "sarau");
+        ArgumentCaptor<SearchRequest> fetched = ArgumentCaptor.forClass(SearchRequest.class);
+        when(vectorStore.similaritySearch(fetched.capture()))
+                .thenReturn(List.of(chunk("sarau-1", "sarau"), chunk("sarau-2", "sarau")));
+        TurGenAiContext context = TurGenAiContext.builder().enabled(true).vectorStore(vectorStore)
+                .siteName("fespsp").build();
+        List<Document> vectorPass = List.of(chunk("expo-1", "expo"), chunk("talk-1", "talk"),
+                chunk("fri-1", "fri"), chunk("sun-1", "sun"), chunk("sat-1", "sat"), chunk("fri-2", "fri"));
+
+        List<Document> ordered = genAi.inPeriodOrder(context, "o que tem esta semana na FESPSP?",
+                Map.of(TurSNGenAi.SOURCE_ID, week), vectorPass);
+
+        assertThat(ordered).extracting(Document::getId)
+                .containsExactly("fri-1", "fri-2", "sat-1", "sun-1", "talk-1", "expo-1", "sarau-1");
+        assertThat(fetched.getValue().getFilterExpression().toString()).contains("sarau").doesNotContain("expo");
+        assertThat(genAi.inPeriodOrder(context, "q", Map.of("city", List.of("x")), vectorPass))
+                .isSameAs(vectorPass);
+    }
+
+    @Test
+    @DisplayName("T1364: above the bound, the answer is told its list was cut")
+    void aCutListIsSaid() {
         when(dslSearchService.search(eq("fespsp"), eq("pt_BR"), any()))
-                .thenReturn(Optional.of(hits()))
-                .thenReturn(Optional.of(hits("expo")));
+                .thenReturn(Optional.of(hits(42, "expo", "sarau")));
 
-        Map<String, List<String>> filters = genAi.retrievalFilters("fespsp", PT, thisWeek("democracia"));
+        TurSNGenAi.DatedRetrieval dated = genAi.datedRetrieval("fespsp", PT, thisWeek(""));
 
-        assertThat(filters).containsExactly(Map.entry(TurSNGenAi.SOURCE_ID, List.of("expo")));
-        verify(dslSearchService, times(2)).search(any(), any(), any());
+        assertThat(dated.cut()).isTrue();
+        assertThat(TurSNGenAi.cutNote(dated)).contains("first 2 of the 42 items")
+                .contains("not complete");
+        when(dslSearchService.search(eq("fespsp"), eq("pt_BR"), any()))
+                .thenReturn(Optional.of(hits("expo", "sarau")));
+        assertThat(TurSNGenAi.cutNote(genAi.datedRetrieval("fespsp", PT, thisWeek("")))).isEmpty();
+    }
+
+    private static TurDslSearchResponse.Hit dated(String id, String end) {
+        return new TurDslSearchResponse.Hit(id, 1.0, Map.of("data_fim", end), null);
     }
 
     @Test
@@ -220,11 +282,15 @@ class TurSNGenAiDatedRetrievalTest {
     }
 
     private static TurDslSearchResponse hits(String... ids) {
+        return hits(ids.length, ids);
+    }
+
+    private static TurDslSearchResponse hits(long total, String... ids) {
         List<TurDslSearchResponse.Hit> list = new ArrayList<>();
         for (String id : ids) {
             list.add(new TurDslSearchResponse.Hit(id, 1.0, Map.of("title", id), null));
         }
         return new TurDslSearchResponse(1L, false,
-                new TurDslSearchResponse.Hits(new TurDslSearchResponse.Total(ids.length, "eq"), 1.0, list), null);
+                new TurDslSearchResponse.Hits(new TurDslSearchResponse.Total(total, "eq"), 1.0, list), null);
     }
 }

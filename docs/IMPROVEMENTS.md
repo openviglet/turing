@@ -35,8 +35,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-## Block CY — Filters from a sentence say what visitors say
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2426,31 +2424,3 @@ module boundaries files here.
 ## CXCI API errors name what the caller sent wrong
 
 ## CXCII Filters from a sentence say what visitors say
-
-### CXCII.6 A period's answer lists the period (T1364)
-
-**Where it happened.** fespsp-institucional, search lab, image 5f4594b (after T1362),
-Friday 2026-11-27. `GET /api/sn/fespsp/answer?q=o que tem esta semana na FESPSP?`
-answered from five events, two of them already over, and left out the "Sarau de domingo
-no Casarão" (Sunday 29, inside the week), which `/search` with the same overlap fq
-returns.
-
-**Cause, to confirm first.** No code caps it at five: `datedIds` asks for 30 ids, the
-filtered vector pass keeps 50 chunks, the sources event is uncapped. Three candidates,
-settled by a test or the `RAG chat` logs:
-1. `datedIds` keeps the leftover words ("FESPSP") unless they find nothing, so a page
-   that never names the site is lost (most likely);
-2. a raised similarity floor on the filtered path;
-3. long pages spending the 50 chunks.
-
-**What it should do.** For a question confined to a period: the period's documents come
-from `datedIds` sorted by the date field the range uses, upcoming first
-(`TurCopilotQueryBodies.of` already takes the sort `datedIds` passes as null); every one
-of them gets at least one chunk instead of a global top 50 by vector score; leftover
-words never narrow an agenda question; above a bound the answer says the list was cut.
-Events already over come after the ones to come.
-
-**Test.** Six events in the week, one without the site's name in its text: all six reach
-the prompt, upcoming first.
-
-**Workaround.** None. The project's assistant line (FI148) waits on this.
