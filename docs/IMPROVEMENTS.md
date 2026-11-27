@@ -35,6 +35,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
+## Block CY — Filters from a sentence say what visitors say
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2424,3 +2426,54 @@ module boundaries files here.
 ## CXCI API errors name what the caller sent wrong
 
 ## CXCII Filters from a sentence say what visitors say
+
+### CXCII.5 Answer times in the site's time zone (T1363)
+
+**Where it happened.** fespsp-institucional, search lab, image 5f4594b (after T1362). SN
+site `fespsp`, pt_BR, `gpt-4o-mini`; the WordPress site's time zone is
+`America/Sao_Paulo` and the plugin sends it in the manifest (T1330).
+
+**The call.** `GET /api/sn/fespsp/answer?q=o que tem esta semana na
+FESPSP?&_setlocale=pt_BR`.
+
+**What came back.** A good list with sources, but every time is three hours late:
+- "Diálogos sobre o SUS … no dia 27 de novembro de 2026, às 22h". The post's
+  `fespsp_evento_inicio` is `2026-11-27T19:00` (site wall clock), indexed as the instant
+  22:00Z.
+- "Desigualdade S.A. … 28 de novembro, às 13h" (10:00 local).
+- "Intérpretes do Brasil … dia 23, a partir das 18h" (15:00 local).
+
+The answer prompt hands the model the UTC instants, and the model prints them as they
+are.
+
+**What it should do.** Dates and times given to the answer and chat prompts are rendered
+in the site's time zone (the one T1330 stores) with the offset dropped, or the prompt
+says the zone and the model is told to convert; a date-only value stays a day. A test
+with a 19:00 event on a UTC-3 site expects "19h" in the answer.
+
+**Workaround.** None. The project's assistant line (FI148) waits on this.
+
+### CXCII.6 A period's answer lists the period (T1364)
+
+**Where it happened.** fespsp-institucional, search lab, image 5f4594b (after T1362),
+same site as the time-zone line. Today Friday 2026-11-27.
+
+**The call.** `GET /api/sn/fespsp/answer?q=o que tem esta semana na
+FESPSP?&_setlocale=pt_BR`.
+
+**What came back.** The period-confined pass retrieved five sources, ranked by vector
+score: "Aula magna de Ciências Sociais" (yesterday, over), "Exposição 90 anos de FESPSP"
+(ended Tuesday), "Desigualdade S.A." (tomorrow), "Diálogos sobre o SUS" (tonight),
+"Intérpretes do Brasil" (running). The answer then says the week's events "abrangem de
+23 a 28 de novembro". The "Sarau de domingo no Casarão" (Sunday 29, inside the week) is
+left out: `/search` with the same overlap fq returns six events, and the sixth never
+reached the prompt because the five slots went partly to events already over.
+
+**What it should do.** A question about a period ("o que tem esta semana", "hoje") lists
+what the period holds: within the period's documents, order by the date field the facet
+uses (what is still to come first, as the SN site's `upcoming` ranking would) rather
+than by vector score, and raise the source cap to what the period holds up to a bound,
+saying so when the list is cut. An event already over this week is mentioned after the
+ones to come, or not at all when the question is "what is on".
+
+**Workaround.** None. The project's assistant line (FI148) waits on this.

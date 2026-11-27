@@ -22,6 +22,11 @@
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
 
+## Block CY — Filters from a sentence say what visitors say
+
+- 📋 **T1363** (deps: —) **A dated answer prints event times in UTC, so a 19h event on a Sao Paulo site is announced at 22h** — A visitor who trusts the assistant arrives three hours late, and the site's time zone is already on Turing. → §CXCII.5
+- 📋 **T1364** (deps: —) **What is on this week lists the top five sources by vector score, so a Sunday event drops out for ones already over** — The answer to an agenda question is a list, and the period's own order is what completes it. → §CXCII.6
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console
